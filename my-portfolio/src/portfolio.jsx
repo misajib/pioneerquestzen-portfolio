@@ -1,7 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
 
 // ─── Utility: cn ───────────────────────────────────────────────────────────
 const cn = (...classes) => classes.filter(Boolean).join(" ");
+
+const cvUrl = `${import.meta.env.BASE_URL}sajib_cv.pdf`;
+pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/build/pdf.worker.min.mjs", import.meta.url).toString();
 
 // ─── DATA ───────────────────────────────────────────────────────────────────
 const NAV_LINKS = ["About", "Skills", "Projects", "Research", "Achievements", "Contact"];
@@ -508,6 +514,11 @@ export default function Portfolio() {
   const [activeSkill, setActiveSkill] = useState("Programming");
   const [mobileMenu, setMobileMenu] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
+  const [isCvModalOpen, setIsCvModalOpen] = useState(false);
+  const [cvPageNumber, setCvPageNumber] = useState(1);
+  const [cvPageCount, setCvPageCount] = useState(0);
+  const [cvScale, setCvScale] = useState(1);
+  const [cvViewerWidth, setCvViewerWidth] = useState(0);
   const [formState, setFormState] = useState({ name: "", email: "", msg: "" });
   const [formSent, setFormSent] = useState(false);
 
@@ -530,12 +541,61 @@ export default function Portfolio() {
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
+  useEffect(() => {
+    const updateCvWidth = () => {
+      const availableWidth = Math.max(320, Math.min(1100, window.innerWidth - 32));
+      setCvViewerWidth(availableWidth);
+    };
+
+    if (!isCvModalOpen) return;
+
+    updateCvWidth();
+    window.addEventListener("resize", updateCvWidth);
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("resize", updateCvWidth);
+      document.body.style.overflow = "";
+    };
+  }, [isCvModalOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (!isCvModalOpen) return;
+      if (event.key === "Escape") setIsCvModalOpen(false);
+      if (event.key === "ArrowLeft") setCvPageNumber((page) => Math.max(page - 1, 1));
+      if (event.key === "ArrowRight") setCvPageNumber((page) => Math.min(page + 1, cvPageCount || page));
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [cvPageCount, isCvModalOpen]);
+
   const handleSend = (e) => {
     e.preventDefault();
     setFormSent(true);
     setTimeout(() => setFormSent(false), 3000);
     setFormState({ name: "", email: "", msg: "" });
   };
+
+  const openCvModal = () => {
+    setCvPageNumber(1);
+    setCvPageCount(0);
+    setCvScale(1);
+    setIsCvModalOpen(true);
+  };
+
+  const closeCvModal = () => setIsCvModalOpen(false);
+
+  const handleCvLoadSuccess = ({ numPages }) => {
+    setCvPageCount(numPages);
+    setCvPageNumber(1);
+  };
+
+  const handlePrevPage = () => setCvPageNumber((page) => Math.max(page - 1, 1));
+  const handleNextPage = () => setCvPageNumber((page) => Math.min(page + 1, cvPageCount || page));
+  const handleZoomIn = () => setCvScale((scale) => Math.min(scale + 0.15, 1.8));
+  const handleZoomOut = () => setCvScale((scale) => Math.max(scale - 0.15, 0.7));
 
   if (!loaded) return <LoadingScreen onDone={() => setLoaded(true)} />;
 
@@ -675,16 +735,25 @@ export default function Portfolio() {
                 onMouseLeave={e => { e.target.style.transform = "scale(1)"; e.target.style.boxShadow = "0 0 30px rgba(59,130,246,0.4)"; }}>
                 View Projects ↗
               </button>
-              <button style={{
-                padding: "14px 32px", borderRadius: 99,
-                background: "transparent",
-                border: "1px solid rgba(255,255,255,0.15)", color: "#F9FAFB",
-                fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: 14,
-                transition: "all 0.3s", cursor: "none",
-              }}
-                onMouseEnter={e => { e.target.style.borderColor = "rgba(59,130,246,0.6)"; e.target.style.background = "rgba(59,130,246,0.08)"; }}
-                onMouseLeave={e => { e.target.style.borderColor = "rgba(255,255,255,0.15)"; e.target.style.background = "transparent"; }}>
-                Download CV ↓
+              <button
+                onClick={openCvModal}
+                style={{
+                  padding: "14px 32px",
+                  borderRadius: 99,
+                  background: "linear-gradient(135deg, #3B82F6, #8B5CF6)",
+                  border: "none",
+                  color: "#fff",
+                  fontFamily: "'Syne', sans-serif",
+                  fontWeight: 600,
+                  fontSize: 14,
+                  transition: "all 0.3s",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "none",
+                }}
+              >
+                View CV 📄
               </button>
             </div>
 
@@ -1111,6 +1180,193 @@ export default function Portfolio() {
           </Reveal>
         </div>
       </section>
+
+      {isCvModalOpen && (
+        <div
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) closeCvModal();
+          }}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 18,
+            background: "rgba(2, 6, 23, 0.74)",
+            backdropFilter: "blur(18px)",
+            WebkitBackdropFilter: "blur(18px)",
+            animation: "modal-fade-in 220ms ease-out",
+          }}
+        >
+          <style>{`
+            @keyframes modal-fade-in {
+              from { opacity: 0; }
+              to { opacity: 1; }
+            }
+            @keyframes modal-pop-in {
+              from { opacity: 0; transform: translateY(18px) scale(0.96); }
+              to { opacity: 1; transform: translateY(0) scale(1); }
+            }
+          `}</style>
+
+          <div
+            onMouseDown={(event) => event.stopPropagation()}
+            style={{
+              width: "min(1100px, 100%)",
+              maxHeight: "92vh",
+              borderRadius: 28,
+              border: "1px solid rgba(255,255,255,0.12)",
+              background: "linear-gradient(180deg, rgba(17,24,39,0.95), rgba(11,15,25,0.98))",
+              boxShadow: "0 30px 80px rgba(0,0,0,0.55)",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+              animation: "modal-pop-in 240ms ease-out",
+            }}
+          >
+            <div style={{ padding: 18, borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+              <div>
+                <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: 2, color: "#22D3EE", marginBottom: 6 }}>
+                  CV PREVIEW
+                </div>
+                <h3 style={{ fontFamily: "'Syne', sans-serif", color: "#F9FAFB", fontSize: "clamp(18px, 2vw, 24px)", margin: 0 }}>
+                  My CV
+                </h3>
+              </div>
+
+              <button
+                onClick={closeCvModal}
+                aria-label="Close CV preview"
+                style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 12,
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  background: "rgba(255,255,255,0.04)",
+                  color: "#E5E7EB",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 18,
+                  cursor: "none",
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{ padding: 16, display: "grid", gap: 14, flex: 1, minHeight: 0 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+                  <button
+                    onClick={handlePrevPage}
+                    disabled={cvPageNumber <= 1}
+                    style={{
+                      padding: "10px 14px",
+                      borderRadius: 12,
+                      border: "1px solid rgba(59,130,246,0.28)",
+                      background: "rgba(59,130,246,0.12)",
+                      color: "#BFDBFE",
+                      fontFamily: "'Space Mono', monospace",
+                      fontSize: 11,
+                      letterSpacing: 1,
+                      cursor: "none",
+                      opacity: cvPageNumber <= 1 ? 0.45 : 1,
+                    }}
+                  >
+                    Prev
+                  </button>
+                  <button
+                    onClick={handleNextPage}
+                    disabled={!cvPageCount || cvPageNumber >= cvPageCount}
+                    style={{
+                      padding: "10px 14px",
+                      borderRadius: 12,
+                      border: "1px solid rgba(139,92,246,0.28)",
+                      background: "rgba(139,92,246,0.12)",
+                      color: "#E9D5FF",
+                      fontFamily: "'Space Mono', monospace",
+                      fontSize: 11,
+                      letterSpacing: 1,
+                      cursor: "none",
+                      opacity: !cvPageCount || cvPageNumber >= cvPageCount ? 0.45 : 1,
+                    }}
+                  >
+                    Next
+                  </button>
+                  <span style={{ color: "#CBD5E1", fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 13 }}>
+                    Page {cvPageNumber} of {cvPageCount || "..."}
+                  </span>
+                </div>
+
+                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  <button
+                    onClick={handleZoomOut}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 12,
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      background: "rgba(255,255,255,0.04)",
+                      color: "#E5E7EB",
+                      cursor: "none",
+                    }}
+                  >
+                    -
+                  </button>
+                  <span style={{ minWidth: 58, textAlign: "center", color: "#9CA3AF", fontFamily: "'Space Mono', monospace", fontSize: 11 }}>
+                    {Math.round(cvScale * 100)}%
+                  </span>
+                  <button
+                    onClick={handleZoomIn}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 12,
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      background: "rgba(255,255,255,0.04)",
+                      color: "#E5E7EB",
+                      cursor: "none",
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <div style={{
+                borderRadius: 20,
+                border: "1px solid rgba(255,255,255,0.06)",
+                background: "#0F172A",
+                overflow: "auto",
+                minHeight: 0,
+                flex: 1,
+                padding: 12,
+              }}>
+                <Document
+                  file={cvUrl}
+                  onLoadSuccess={handleCvLoadSuccess}
+                  loading={<div style={{ padding: 28, color: "#CBD5E1", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Loading CV preview...</div>}
+                  error={<div style={{ padding: 28, color: "#FCA5A5", fontFamily: "'Plus Jakarta Sans', sans-serif" }}>Unable to load the CV preview.</div>}
+                >
+                  <div style={{ display: "flex", justifyContent: "center", minWidth: "100%" }}>
+                    <div style={{ background: "#111827", borderRadius: 14, padding: 10, boxShadow: "0 20px 40px rgba(0,0,0,0.25)" }}>
+                      <Page
+                        pageNumber={cvPageNumber}
+                        width={Math.max(320, Math.floor((cvViewerWidth || 960) * cvScale) - 48)}
+                        renderAnnotationLayer={false}
+                        renderTextLayer={false}
+                      />
+                    </div>
+                  </div>
+                </Document>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── FOOTER ── */}
       <footer style={{
