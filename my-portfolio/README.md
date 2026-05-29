@@ -1,16 +1,77 @@
-# React + Vite
+# 🚀 Pioneer QuestZen
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<div align="center">
 
-Currently, two official plugins are available:
+AI Researcher | Computer Vision | Healthcare AI | NLP & LLM Applications
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+[Live Demo](YOUR_GITHUB_PAGES_LINK) • [Portfolio](YOUR_PORTFOLIO_LINK) • [LinkedIn](YOUR_LINKEDIN) • [Google Scholar](YOUR_SCHOLAR)
 
-## React Compiler
+</div>
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 📖 About
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Pioneer QuestZen is my personal academic and research portfolio showcasing:
+
+- Research Publications
+- AI & Machine Learning Projects
+- Computer Vision Research
+- Competitive Programming Journey
+- Academic Achievements
+- Certifications
+
+---
+
+## ✨ Features
+
+- Modern Glassmorphism UI
+- Fully Responsive Design
+- Research Publication Showcase
+- Interactive Project Gallery
+- CV Preview & Download
+- Academic Timeline
+- Dark Theme Experience
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+
+- React.js
+- Vite
+- JavaScript
+- HTML5
+- CSS3
+
+### Tools
+
+- Git
+- GitHub Pages
+- Firebase (Development)
+- VS Code
+
+---
+
+## 📚 Research Areas
+
+- Artificial Intelligence
+- Machine Learning
+- Deep Learning
+- Computer Vision
+- Healthcare AI
+- NLP
+- Large Language Models
+- Retrieval-Augmented Generation
+- Explainable AI
+
+---
+
+## 🚀 Running Locally
+
+```bash
+git clone https://github.com/misajib/pioneerquestzen-portfolio.git
+cd pioneerquestzen-portfolio
+npm install
+npm run dev

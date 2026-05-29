@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Link } from "react-router-dom";
 
 // ─── Utility: cn ───────────────────────────────────────────────────────────
 const cn = (...classes) => classes.filter(Boolean).join(" ");
@@ -6,132 +7,185 @@ const cn = (...classes) => classes.filter(Boolean).join(" ");
 // ─── DATA ───────────────────────────────────────────────────────────────────
 const NAV_LINKS = ["About", "Skills", "Projects", "Research", "Achievements", "Contact"];
 
+const AUTHOR_NAME = "Md Mohaiminul Islam Sajib";
+
 const SKILLS = {
-  Programming: [
-    { name: "Python", level: 95 }, { name: "JavaScript / TypeScript", level: 88 },
-    { name: "C / C++", level: 80 }, { name: "Java", level: 75 }, { name: "Rust", level: 60 },
+  "Programming Languages": [
+    { name: "Python", level: 90 }, { name: "C / C++", level: 95 },
+    { name: "JavaScript", level: 80 }, { name: "Java", level: 50 }, { name: "SQL", level: 82 },
   ],
-  "AI / ML": [
-    { name: "PyTorch / TensorFlow", level: 92 }, { name: "Transformers & LLMs", level: 90 },
-    { name: "Computer Vision", level: 85 }, { name: "Reinforcement Learning", level: 78 },
-    { name: "MLOps & Deployment", level: 72 },
+  "AI / ML / NLP": [
+    { name: "PyTorch", level: 92 }, { name: "TensorFlow", level: 88 },
+    { name: "Scikit-learn", level: 90 }, { name: "Transformers", level: 87 },
+    { name: "LangChain / RAG / LLMs", level: 50 },
   ],
   "Web Development": [
-    { name: "React / Next.js", level: 91 }, { name: "Node.js / Express", level: 84 },
-    { name: "PostgreSQL / MongoDB", level: 80 }, { name: "Docker / Kubernetes", level: 74 },
-    { name: "GraphQL / REST APIs", level: 88 },
+    { name: "React.js", level: 91 }, { name: "Vite", level: 86 },
+    { name: "Django", level: 84 }, { name: "Firebase", level: 82 },
+    { name: "REST API", level: 88 },
   ],
-  Research: [
-    { name: "Research Methodology", level: 88 }, { name: "Academic Writing", level: 85 },
-    { name: "Data Analysis", level: 90 }, { name: "Experiment Design", level: 82 },
-    { name: "Literature Review", level: 87 },
+  "Tools & Platforms": [
+    { name: "Git / GitHub", level: 92 }, { name: "Linux", level: 84 },
+    { name: "Docker", level: 78 }, { name: "Google Colab", level: 88 },
+    { name: "Jupyter Notebook / VS Code", level: 90 },
   ],
-  Networking: [
-    { name: "TCP/IP & Protocols", level: 80 }, { name: "Network Security", level: 75 },
-    { name: "Cloud (AWS/GCP)", level: 78 }, { name: "Linux Systems", level: 85 },
-    { name: "DevSecOps", level: 70 },
+  "Competitive Programming": [
+    { name: "Codeforces", level: 82 }, { name: "LeetCode", level: 85 },
+    { name: "Data Structures", level: 90 }, { name: "Algorithms", level: 90 },
+    { name: "Dynamic Programming", level: 84 },
+  ],
+  "Generative AI": [
+    { name: "ChatGPT", level: 92 }, { name: "Claude", level: 86 },
+    { name: "Gemini / Grok / DeepSeek", level: 84 }, { name: "Stable Diffusion", level: 72 },
+    { name: "Prompt Engineering", level: 88 },
   ],
 };
 
 const PROJECTS = [
   {
-    title: "NeuralVision OS",
-    desc: "A real-time object detection and scene understanding system powered by a custom transformer architecture achieving 94.2 mAP on COCO.",
-    tags: ["PyTorch", "CUDA", "React", "WebRTC"],
+    title: "Cook2Cart: An AI-Driven Secure Recipe-to-Cart Grocery E-Commerce Platform with Smart Recommendation",
+    desc: "An AI-driven recipe-to-cart grocery e-commerce platform that extracts ingredients from recipes, maps them to available products, and supports intelligent product recommendations.",
+    tags: ["Django", "Python", "PostgreSQL", "MongoDB", "GPT", "LLaMA", "Qwen"],
     color: "#3B82F6",
     featured: true,
-    emoji: "🧠",
+    emoji: "🛒",
   },
   {
-    title: "QuantumChat LLM",
-    desc: "Fine-tuned language model for domain-specific dialogue with RLHF pipeline, serving 10K+ users via REST API.",
-    tags: ["Transformers", "FastAPI", "Docker", "Redis"],
+    title: "Graphical Visualization and Implementation of Line Drawing & 2D Transformations with an Interactive 3D Rubik's Cube using OpenGL",
+    desc: "Implemented DDA-based line drawing, 2D transformations, interactive mouse and keyboard controls, zooming, camera rotation, and a fully interactive 3D Rubik's Cube visualization.",
+    tags: ["C++", "OpenGL", "GLUT", "DDA"],
     color: "#8B5CF6",
     featured: true,
-    emoji: "⚛️",
+    emoji: "🧊",
   },
   {
-    title: "SynthFlow Platform",
-    desc: "Full-stack MLOps platform for experiment tracking, model versioning, and automated deployment pipelines.",
-    tags: ["Next.js", "Kubernetes", "MLflow", "PostgreSQL"],
+    title: "SmartPark: IoT-Based Smart Parking Management System",
+    desc: "Built a real-time smart parking solution using NodeMCU and IR sensors for occupancy monitoring with Firebase-based cloud synchronization and Android app support.",
+    tags: ["NodeMCU", "Firebase", "Android Studio", "Embedded C"],
     color: "#22D3EE",
     featured: false,
-    emoji: "🚀",
-  },
-  {
-    title: "CipherNet Security",
-    desc: "AI-powered intrusion detection system using anomaly detection and graph neural networks for network traffic analysis.",
-    tags: ["GNN", "Scapy", "Go", "InfluxDB"],
-    color: "#10B981",
-    featured: false,
-    emoji: "🛡️",
-  },
-  {
-    title: "BioScan Diagnostics",
-    desc: "Medical image analysis tool for early disease detection using self-supervised learning on limited labeled data.",
-    tags: ["SSL", "DICOM", "Flask", "React"],
-    color: "#F59E0B",
-    featured: false,
-    emoji: "🔬",
-  },
-  {
-    title: "EduAgent AI",
-    desc: "Autonomous tutoring agent that generates personalized learning paths using multi-agent reasoning systems.",
-    tags: ["LangChain", "OpenAI", "Vue.js", "MongoDB"],
-    color: "#EC4899",
-    featured: false,
-    emoji: "📚",
+    emoji: "📱",
   },
 ];
 
 const RESEARCH = [
+  {
+    year: "2026",
+    title: "Explainable Hybrid Learning for Cardiovascular Risk Prediction with mRMR-PCA Feature Optimization",
+    venue: "IEEE 2nd International Conference on Quantum Photonics, Artificial Intelligence and Networking (QPAIN 2026)",
+    authors: [AUTHOR_NAME, "Protik Chakroborty"],
+    abstract: "Explainable cardiovascular risk prediction work using hybrid learning with mRMR-PCA feature optimization.",
+    status: "Published",
+  },
 
+  {
+    year: "2026",
+    title: "License Plate Recognition System Using Deep Learning Approach",
+    venue: "IEEE 2nd International Conference on Quantum Photonics, Artificial Intelligence and Networking (QPAIN 2026)",
+    authors: ["Mst. Homai Ara Yesmin", "Md. Nahid Hasan", AUTHOR_NAME, "Md. Yousuf Ali", "Sohanur Rahman", "Protik Chakroborty"],
+    abstract: "Deep learning-based license plate recognition system developed for practical computer vision use.",
+    status: "Published",
+  },
+  {
+    year: "2026",
+    title: "DiffusionDxNet: Improving Monkeypox Classification Using Diffusion-Based Data Augmentation and DenseNet121",
+    venue: "IEEE 2nd International Conference on Quantum Photonics, Artificial Intelligence and Networking (QPAIN 2026)",
+    authors: [AUTHOR_NAME, "Protik Chakroborty", "Md. Adnan Sami", "Md. Abdus Sami Shezan", "Bishal Prosad"],
+    abstract: "Monkeypox classification work using diffusion-based augmentation and DenseNet121.",
+    status: "Published",
+  },
+  {
+    year: "2025",
+    title: "FusionDxNet: A Fusion-Based Approach for Robust Lung & Colon Cancer Classification Using Histopathological Images",
+    venue: "3rd International Conference on Big Data, IoT and Machine Learning (BIM 2025)",
+    authors: ["Protik Chakroborty", "Pallab Chowdhury", "Pritom Chakroborty", "Arun Kumar Sikder", AUTHOR_NAME],
+    abstract: "Fusion-based deep learning framework for robust lung and colon cancer classification from histopathological images.",
+    status: "Published",
+  },
   {
     year: "2025",
     title: "SmartPark: An IoT-Driven Urban Car Parking Solution Using NodeMCU and Android Integration",
-    venue: "UCICS 2025, Varendra University",
-    abstract: "An IoT-based smart parking system using NodeMCU, RFID, cloud computing, and Android integration for real-time parking monitoring, automated access control, and efficient urban parking management.",
+    venue: "Undergraduate Conference on Intelligent Computing & Systems (UCICS 2025)",
+    authors: [AUTHOR_NAME, "Rejaul Karim Reja", "Ruhul Amin", "Abdul-Al Nasheed Qatum", "Mahfuz Ahmad", "Farhana Akter Faiza", "Fatlab Chowdhury"],
+    abstract: "IoT-based smart parking system using NodeMCU, cloud synchronization, and Android integration for real-time parking monitoring.",
     status: "Published",
-  },
-
-
-  {
-    year: "2025",
-    title: "Attention-Efficient Transformers for Edge Deployment",
-    venue: "IEEE CVPR 2025",
-    abstract: "Proposed a novel sparse attention mechanism reducing compute by 68% while maintaining 99.1% baseline accuracy on vision benchmarks.",
-    status: "Published",
-  },
-  {
-    year: "2024",
-    title: "Federated Learning with Differential Privacy in Healthcare",
-    venue: "NeurIPS 2024 Workshop",
-    abstract: "Framework for privacy-preserving collaborative model training across hospital networks without sharing raw patient data.",
-    status: "Published",
-  },
-  {
-    year: "2024",
-    title: "Graph Neural Networks for Anomaly Detection in IoT Networks",
-    venue: "IEEE TNSM",
-    abstract: "GNN-based approach for detecting zero-day attacks in heterogeneous IoT environments with 97.8% detection rate.",
-    status: "Under Review",
   },
 ];
 
+const renderAcademicAuthors = (authors) =>
+  authors.map((author, index) => {
+    const isMyName = author === AUTHOR_NAME;
+    return (
+      <span key={`${author}-${index}`}>
+        {index > 0 && ", "}
+        <span style={isMyName ? { fontWeight: 700, color: "#3B82F6" } : undefined}>
+          {author}
+        </span>
+      </span>
+    );
+  });
+
 const ACHIEVEMENTS = [
-  { icon: "🏆", title: "1st Place — National AI Hackathon", sub: "Ministry of Science & Technology, 2024" },
-  { icon: "🥇", title: "Google Developer Expert Finalist", sub: "Machine Learning Track, 2024" },
-  { icon: "📜", title: "IEEE Senior Student Member", sub: "Institute of Electrical and Electronics Engineers" },
-  { icon: "🎓", title: "Full Merit Scholarship", sub: "CGPA 4.00 / 4.00 — BSc CSE" },
-  { icon: "🌍", title: "Top 1% — LeetCode Global", sub: "2000+ Problems Solved" },
-  { icon: "🤝", title: "Open Source Contributor", sub: "PyTorch, Hugging Face — 1.2K GitHub Stars" },
+  { icon: "🎤", title: "Conference Presenter", sub: "IEEE QPAIN 2026, CUET, Chattogram, Bangladesh" },
+  { icon: "🎤", title: "Conference Presenter", sub: "BIM 2025, Dhaka International University, Bangladesh" },
+  { icon: "📜", title: "Certificate of Appreciation", sub: "UCICS 2025, Varendra University, Bangladesh" },
+  { icon: "🖥️", title: "Multimedia & Graphics Design", sub: "NACTAR, Ministry of Education, Bangladesh" },
+  { icon: "💻", title: "Microsoft Office Applications", sub: "Word, Excel, and Access Training, NACTAR" },
+  { icon: "🌐", title: "Networking & Internet Programming", sub: "National Academy for Computer Training and Research" },
 ];
 
 const STATS = [
-  { label: "Projects Built", value: 40 },
-  { label: "Research Papers", value: 8 },
-  { label: "GitHub Stars", value: 1200 },
+  { label: "Projects", value: 3 },
+  { label: "Publications", value: 5 },
+  { label: "Awards", value: 6 },
   { label: "Cups of Coffee", value: 9999 },
+];
+
+// New sections data (keeps existing design language and card style)
+const LEADERSHIP = [
+  {
+    title: "Research Team Lead",
+    desc: "Led the UCICS 2025 publication project and coordinated a multidisciplinary team throughout the research, development, and presentation phases.",
+    icon: "🧭",
+  },
+  {
+    title: "Member, Varendra University Programming Club (VUPC)",
+    desc: "Participated in programming contests, technical workshops, and collaborative learning activities.",
+    icon: "🤝",
+  },
+  {
+    title: "Open-Source Contributor",
+    desc: "Maintains Machine Learning, NLP, and IoT projects on GitHub while promoting knowledge sharing and continuous learning.",
+    icon: "🌐",
+  },
+  {
+    title: "Competitive Programmer",
+    desc: "Active on Codeforces and LeetCode with interests in graph theory, dynamic programming, algorithms, and problem solving.",
+    icon: "🏆",
+  },
+  {
+    title: "Master of Ceremonies (Host)",
+    desc: "Hosted and coordinated the annual cultural program \"Surer Murchhanay Bashonti Shondha\" at Jahangirabad Cantonment, demonstrating leadership, communication, and event management skills.",
+    icon: "🎤",
+  },
+];
+
+const LANGUAGES = [
+  { name: "Bengali", level: "Native" },
+  { name: "English", level: "Professional Proficiency" },
+];
+
+const INTERESTS = [
+  "Hiking",
+  "Traveling",
+  "Reading Research Papers",
+  "Competitive Programming",
+  "Open Source Development",
+  "Artificial Intelligence",
+  "Exploring Different Cultures",
+  "Tech Exploration",
+  "Mentoring Students",
+  "Emerging Technologies",
 ];
 
 // ─── Animated Counter ────────────────────────────────────────────────────────
@@ -381,7 +435,7 @@ function LoadingScreen({ onDone }) {
         letterSpacing: 8, textTransform: "uppercase",
       }}>
         {/* INITIALIZING */}
-        MD MOHAIMINUL ISLAM SAJIB (PIONEER QUESTZEN)
+        MUHAMMAD MOHAIMINUL ISLAM SAJIB (PIONEER QUESTZEN)
       </div>
       <div style={{
         width: 240, height: 2, background: "rgba(255,255,255,0.08)",
@@ -506,7 +560,7 @@ function SectionTitle({ tag, title, sub }) {
 // ─── MAIN PORTFOLIO ──────────────────────────────────────────────────────────
 export default function Portfolio() {
   const [loaded, setLoaded] = useState(false);
-  const [activeSkill, setActiveSkill] = useState("Programming");
+  const [activeSkill, setActiveSkill] = useState("Programming Languages");
   const [mobileMenu, setMobileMenu] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
   const [formState, setFormState] = useState({ name: "", email: "", msg: "" });
@@ -598,16 +652,17 @@ export default function Portfolio() {
                 {l}
               </button>
             ))}
-            <button style={{
-              padding: "8px 20px", borderRadius: 99, border: "1px solid #3B82F6",
-              background: "rgba(59,130,246,0.1)", color: "#3B82F6",
-              fontFamily: "'Space Mono', monospace", fontSize: 11,
-              letterSpacing: 1, transition: "all 0.2s", cursor: "none",
-            }}
-              onMouseEnter={e => { e.target.style.background = "#3B82F6"; e.target.style.color = "#fff"; }}
-              onMouseLeave={e => { e.target.style.background = "rgba(59,130,246,0.1)"; e.target.style.color = "#3B82F6"; }}>
-              HIRE ME
-            </button>
+            <a href={"mailto:232311314@vu.edu.bd,misajib0493@gmail.com?subject=" + encodeURIComponent("Research Collaboration") + "&body=" + encodeURIComponent("Hi Md Mohaiminul Islam Sajib,%0A%0AI'd like to discuss a research collaboration.%0A%0ARegards,%0A[Your Name]")}
+              style={{
+                display: "inline-block", padding: "8px 20px", borderRadius: 99, border: "1px solid #3B82F6",
+                background: "rgba(59,130,246,0.1)", color: "#3B82F6",
+                fontFamily: "'Space Mono', monospace", fontSize: 11,
+                letterSpacing: 1, transition: "all 0.2s", cursor: "none", textDecoration: "none",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = "#3B82F6"; e.currentTarget.style.color = "#fff"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "rgba(59,130,246,0.1)"; e.currentTarget.style.color = "#3B82F6"; }}>
+              Collaborate With Me 🤝
+            </a>
           </div>
         </div>
       </nav>
@@ -644,7 +699,7 @@ export default function Portfolio() {
               fontSize: "clamp(42px, 7vw, 80px)", lineHeight: 1.0,
               color: "#F9FAFB", marginBottom: 16,
             }}>
-              Md Mohaiminul Islam<br />
+              Muhammad Mohaiminul Islam<br />
               <span style={{
                 background: "linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #22D3EE 100%)",
                 backgroundSize: "200% auto",
@@ -656,11 +711,11 @@ export default function Portfolio() {
             </h1>
 
             <div style={{ fontFamily: "'Syne', sans-serif", fontSize: "clamp(18px, 2.5vw, 26px)", marginBottom: 24, minHeight: 36 }}>
-              <Typing texts={["AI Researcher", "Problem Solver", "CS Student", "Open Source Contributor", "ML Engineer"]} />
+              <Typing texts={["AI/ML Researcher", "Computer Vision Enthusiast", "NLP & LLM Explorer", "Undergraduate Researcher", "Competitive Programmer"]} />
             </div>
 
             <p style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, lineHeight: 1.8, maxWidth: 520, marginBottom: 40 }}>
-              Building intelligent systems at the intersection of deep learning, systems design, and human-computer interaction. Turning research into real-world impact.
+              Third-year Computer Science and Engineering student at Varendra University focused on artificial intelligence, machine learning, computer vision, natural language processing, and applied research.
             </p>
 
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 48 }}>
@@ -677,7 +732,7 @@ export default function Portfolio() {
                 View Projects ↗
               </button>
               <a
-                href="/sajib_cv.pdf"
+                href={`${import.meta.env.BASE_URL}sajib_cv.pdf`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -701,7 +756,7 @@ export default function Portfolio() {
               </a>
 
               <a
-                href="/sajib_cv.pdf"
+                href={`${import.meta.env.BASE_URL}sajib_cv.pdf`}
                 download
                 style={{
                   padding: "14px 32px",
@@ -737,10 +792,10 @@ export default function Portfolio() {
             {/* Social */}
             <div style={{ display: "flex", gap: 16 }}>
               {[
-                { label: "GH", color: "#F9FAFB", url: "#" },
-                { label: "LI", color: "#0077B5", url: "#" },
-                { label: "TW", color: "#1DA1F2", url: "#" },
-                { label: "GM", color: "#EA4335", url: "#" },
+                { label: "GH", color: "#F9FAFB", url: "https://github.com/misajib" },
+                { label: "LI", color: "#0077B5", url: "https://www.linkedin.com/in/muhammad-mohaiminul-islam-sajib-972a60317/" },
+                { label: "KG", color: "#20BEFF", url: "https://www.kaggle.com/misajib" },
+                { label: "GM", color: "#EA4335", url: "mailto:232311314@vu.edu.bd,misajib0493@gmail.com" },
               ].map(s => (
                 <a key={s.label} href={s.url} style={{
                   width: 44, height: 44, borderRadius: 12,
@@ -792,7 +847,7 @@ export default function Portfolio() {
                   filter: "drop-shadow(0 0 20px rgba(59,130,246,0.5))",
                 }}>👨‍💻</div> */
                   <img
-                    src="/sajib.jpg"
+                    src={`${import.meta.env.BASE_URL}sajib.jpg`}
                     alt="Profile"
                     style={{
                       width: "100%",
@@ -849,21 +904,31 @@ export default function Portfolio() {
       <section id="about" style={{ padding: "120px 5vw" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Reveal>
-            <SectionTitle tag="01 — About" title="Who Am I?" sub="A curious builder driven by the quest to make machines think." />
+            <SectionTitle tag="01 — About" title="Who Am I?" sub="Third-year CSE student at Varendra University working across AI, research, and applied software projects." />
           </Reveal>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 24 }}>
             {[
-              { icon: "🎓", title: "Education", content: "BSc in Computer Science at MIT, specializing in AI & Machine Learning. Expected 2026. Thesis on efficient transformer architectures." },
-              { icon: "🔬", title: "Research Focus", content: "Deep learning optimization, federated learning, privacy-preserving AI, and autonomous systems. Published in IEEE CVPR and NeurIPS." },
-              { icon: "💡", title: "Interests", content: "Building at the frontier of AI safety, interpretability, and efficient inference. Also passionate about open-source tooling and developer experience." },
-              { icon: "🌐", title: "Philosophy", content: "Technology should empower people, not replace them. I build systems that augment human capability while remaining transparent and interpretable." },
+              { icon: "🎓", title: "Education", content: "B.Sc. in Computer Science and Engineering at Varendra University, Rajshahi, currently in the 3rd year, 6th semester, with CGPA [4.00]/4.00.", href: "/education" },
+              { icon: "🔬", title: "Research Focus", content: "Artificial intelligence, machine learning, computer vision, natural language processing, large language models, retrieval-augmented generation, explainable AI, and healthcare AI." },
+              { icon: "💡", title: "Technical Focus", content: "Deep learning, computer architecture, IoT-based intelligent systems, and competitive programming with practical work across research and product implementation." },
+              { icon: "🌐", title: "Academic Profile", content: "Conference author and presenter with work spanning smart parking, medical imaging, license plate recognition, and cardiovascular risk prediction." },
             ].map((c, i) => (
               <Reveal key={c.title} delay={i * 100}>
-                <Glass style={{ padding: 32, height: "100%" }}>
-                  <div style={{ fontSize: 36, marginBottom: 16 }}>{c.icon}</div>
-                  <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 18, color: "#F9FAFB", marginBottom: 12 }}>{c.title}</h3>
-                  <p style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14, lineHeight: 1.7 }}>{c.content}</p>
-                </Glass>
+                {c.href ? (
+                  <Link to={c.href} style={{ textDecoration: "none", color: "inherit", display: "block" }}>
+                    <Glass style={{ padding: 32, height: "100%" }}>
+                      <div style={{ fontSize: 36, marginBottom: 16 }}>{c.icon}</div>
+                      <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 18, color: "#F9FAFB", marginBottom: 12 }}>{c.title}</h3>
+                      <p style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14, lineHeight: 1.7 }}>{c.content}</p>
+                    </Glass>
+                  </Link>
+                ) : (
+                  <Glass style={{ padding: 32, height: "100%" }}>
+                    <div style={{ fontSize: 36, marginBottom: 16 }}>{c.icon}</div>
+                    <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 18, color: "#F9FAFB", marginBottom: 12 }}>{c.title}</h3>
+                    <p style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14, lineHeight: 1.7 }}>{c.content}</p>
+                  </Glass>
+                )}
               </Reveal>
             ))}
           </div>
@@ -874,7 +939,7 @@ export default function Portfolio() {
       <section id="skills" style={{ padding: "120px 5vw", background: "rgba(17,24,39,0.4)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Reveal>
-            <SectionTitle tag="02 — Skills" title="Tech Stack" sub="Proficiency across the full AI/ML and software engineering spectrum." />
+            <SectionTitle tag="02 — Skills" title="Tech Stack" sub="Programming, AI/ML, web development, tools, and competitive programming areas reflected in the CV." />
           </Reveal>
           {/* Category tabs */}
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginBottom: 48 }}>
@@ -909,7 +974,7 @@ export default function Portfolio() {
               <Glass style={{ padding: 32, display: "flex", flexDirection: "column", gap: 16 }}>
                 <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, marginBottom: 12, color: "#F9FAFB", fontSize: 18 }}>Core Technologies</h3>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-                  {["Python", "PyTorch", "React", "TypeScript", "Docker", "Kubernetes", "PostgreSQL", "AWS", "Redis", "GraphQL", "FastAPI", "Git", "Linux", "CUDA", "Rust", "Go"].map(t => (
+                  {["Python", "C++", "Java", "JavaScript", "SQL", "PyTorch", "TensorFlow", "Scikit-learn", "Transformers", "LangChain", "RAG", "LLMs", "React.js", "Django", "Firebase", "Git"].map(t => (
                     <span key={t} style={{
                       padding: "6px 14px", borderRadius: 8,
                       background: "rgba(59,130,246,0.08)",
@@ -933,7 +998,7 @@ export default function Portfolio() {
       <section id="projects" style={{ padding: "120px 5vw" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Reveal>
-            <SectionTitle tag="03 — Work" title="Projects" sub="Real systems built with obsessive attention to craft and performance." />
+            <SectionTitle tag="03 — Work" title="Projects" sub="Projects, labs, and applied systems built from the CV and academic work." />
           </Reveal>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(340px,1fr))", gap: 28 }}>
             {PROJECTS.map((p, i) => (
@@ -1001,7 +1066,7 @@ export default function Portfolio() {
       <section id="research" style={{ padding: "120px 5vw", background: "rgba(17,24,39,0.4)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Reveal>
-            <SectionTitle tag="04 — Academia" title="Research & Publications" sub="Peer-reviewed contributions advancing the state of the art." />
+            <SectionTitle tag="04 — Academia" title="Research & Publications" sub="Conference publications and applied research in AI, computer vision, and intelligent systems." />
           </Reveal>
           <div style={{ position: "relative" }}>
             {/* Timeline line */}
@@ -1009,45 +1074,38 @@ export default function Portfolio() {
               position: "absolute", left: 24, top: 0, bottom: 0, width: 1,
               background: "linear-gradient(#3B82F6,#8B5CF6,transparent)",
             }} />
-            <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
               {RESEARCH.map((r, i) => (
                 <Reveal key={r.title} delay={i * 120}>
-                  <div style={{ display: "flex", gap: 40, paddingLeft: 64, position: "relative" }}>
+                  <div style={{ display: "flex", gap: 24, paddingLeft: 84, position: "relative", alignItems: "flex-start" }}>
                     <div style={{
-                      position: "absolute", left: 16, top: 24, width: 18, height: 18,
+                      position: "absolute", left: 28, top: 20, width: 14, height: 14,
                       borderRadius: "50%", background: "linear-gradient(135deg,#3B82F6,#8B5CF6)",
-                      boxShadow: "0 0 16px rgba(59,130,246,0.6)", border: "2px solid #0B0F19",
+                      boxShadow: "0 6px 20px rgba(59,130,246,0.25)", border: "2px solid #0B0F19",
                     }} />
-                    <Glass style={{ padding: 28, flex: 1 }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, marginBottom: 12 }}>
+
+                    <div style={{ width: 100, textAlign: "right", paddingRight: 16 }}>
+                      <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: 20, color: "#F9FAFB", lineHeight: 1 }}>{r.year}</div>
+                      <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#9CA3AF", marginTop: 6 }}>{r.venue}</div>
+                    </div>
+
+                    <Glass style={{ padding: 28, flex: 1, transition: "transform 0.25s, box-shadow 0.25s", cursor: "none" }}
+                      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-8px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(59,130,246,0.12)"; }}
+                      onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start", flexWrap: "wrap", marginBottom: 8 }}>
                         <div>
-                          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#3B82F6", letterSpacing: 2, marginBottom: 8 }}>{r.year} · {r.venue}</div>
-                          <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 18, color: "#F9FAFB" }}>{r.title}</h3>
+                          <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: 18, color: "#F9FAFB", marginBottom: 6 }}>{r.title}</h3>
+                          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, color: "#3B82F6", letterSpacing: 1 }}>{renderAcademicAuthors(r.authors)}</div>
                         </div>
-                        <span style={{
-                          padding: "5px 14px", borderRadius: 99, fontSize: 11,
-                          background: r.status === "Published" ? "rgba(16,185,129,0.15)" : "rgba(245,158,11,0.15)",
-                          border: `1px solid ${r.status === "Published" ? "rgba(16,185,129,0.4)" : "rgba(245,158,11,0.4)"}`,
-                          color: r.status === "Published" ? "#10B981" : "#F59E0B",
-                          fontFamily: "'Space Mono',monospace", whiteSpace: "nowrap",
-                        }}>{r.status}</span>
+                        <span style={{ padding: "6px 12px", borderRadius: 999, fontSize: 11, background: r.status === "Published" ? "rgba(16,185,129,0.12)" : "rgba(245,158,11,0.12)", border: `1px solid ${r.status === "Published" ? "rgba(16,185,129,0.28)" : "rgba(245,158,11,0.28)"}`, color: r.status === "Published" ? "#10B981" : "#F59E0B", fontFamily: "'Space Mono',monospace" }}>{r.status}</span>
                       </div>
-                      <p style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14, lineHeight: 1.7 }}>{r.abstract}</p>
-                      <a
-                        href="https://scholar.google.com/citations?view_op=view_citation&hl=en&user=ynJRhxEAAAAJ&citation_for_view=ynJRhxEAAAAJ:u-x6o8ySG0sC"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          color: "#3B82F6",
-                          textDecoration: "none",
-                          fontSize: "12px",
-                          fontFamily: "'Space Mono', monospace",
-                          display: "inline-block",
-                          marginTop: "14px",
-                        }}
-                      >
-                        View Publication ↗
-                      </a>
+                      <p style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14, lineHeight: 1.7, marginBottom: 12 }}>{r.abstract}</p>
+                      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                        <a href={r.link || "#"} target="_blank" rel="noopener noreferrer" style={{ padding: "8px 12px", fontSize: 12, borderRadius: 10, background: "rgba(59,130,246,0.12)", color: "#3B82F6", textDecoration: "none", border: "1px solid rgba(59,130,246,0.18)", fontFamily: "'Space Mono',monospace" }}>Read Paper ↗</a>
+                        {r.tags && r.tags.map(t => (
+                          <span key={t} style={{ padding: "6px 10px", borderRadius: 8, background: "rgba(255,255,255,0.03)", color: "#9CA3AF", fontFamily: "'Space Mono',monospace", fontSize: 11 }}>{t}</span>
+                        ))}
+                      </div>
                     </Glass>
                   </div>
                 </Reveal>
@@ -1061,7 +1119,7 @@ export default function Portfolio() {
       <section id="achievements" style={{ padding: "120px 5vw" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Reveal>
-            <SectionTitle tag="05 — Honors" title="Achievements" sub="Recognition across research, competition, and open-source contribution." />
+            <SectionTitle tag="05 — Honors" title="Certifications & Recognition" sub="Conference presentations, certificates, and professional training from the CV." />
           </Reveal>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 20 }}>
             {ACHIEVEMENTS.map((a, i) => (
@@ -1082,19 +1140,110 @@ export default function Portfolio() {
           </div>
         </div>
       </section>
+      {/* ── LEADERSHIP & ACTIVITIES ── */}
+      <section id="leadership" style={{ padding: "120px 5vw" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <Reveal>
+            <SectionTitle tag="— Leadership" title="Leadership & Activities" sub="Selected leadership roles, community participation, and event experience." />
+          </Reveal>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 20 }}>
+            {LEADERSHIP.map((l, i) => (
+              <Reveal key={l.title} delay={i * 80}>
+                <div style={{
+                  background: "rgba(255,255,255,0.03)", backdropFilter: "blur(20px)",
+                  border: "1px solid rgba(255,255,255,0.07)", borderRadius: 20, padding: 28,
+                  transition: "all 0.4s ease", cursor: "none", position: "relative", overflow: "hidden",
+                }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.boxShadow = "0 24px 60px rgba(59,130,246,0.12)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}>
+                  <div style={{ fontSize: 40, marginBottom: 16 }}>{l.icon}</div>
+                  <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 18, color: "#F9FAFB", marginBottom: 10 }}>{l.title}</h3>
+                  <p style={{ color: "#9CA3AF", fontSize: 13, lineHeight: 1.7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{l.desc}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── LANGUAGES ── */}
+      <section id="languages" style={{ padding: "80px 5vw", background: "rgba(17,24,39,0.04)" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <Reveal>
+            <SectionTitle tag="— Languages" title="Languages" sub="" />
+          </Reveal>
+          <Reveal delay={100}>
+            <Glass style={{ padding: 20, display: "flex", gap: 12, flexWrap: "wrap" }}>
+              {LANGUAGES.map(l => (
+                <div key={l.name} style={{ padding: "8px 14px", borderRadius: 12, background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.12)", color: "#F9FAFB", fontFamily: "'Space Mono',monospace", fontSize: 13 }}>
+                  <div style={{ fontWeight: 700 }}>{l.name}</div>
+                  <div style={{ fontSize: 12, color: "#9CA3AF" }}>{l.level}</div>
+                </div>
+              ))}
+            </Glass>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── PERSONAL INTERESTS ── */}
+      <section id="interests" style={{ padding: "120px 5vw" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <Reveal>
+            <SectionTitle tag="— Beyond Technology" title="Beyond Technology" sub="Personal interests that shape my research curiosity and collaboration style." />
+          </Reveal>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: 18, marginTop: 20 }}>
+            {INTERESTS.map((it, i) => (
+              <Reveal key={`${it}-${i}`} delay={i * 50}>
+                <Glass style={{ padding: 20, textAlign: "center", transition: "transform 0.25s, box-shadow 0.25s", cursor: "none" }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.boxShadow = "0 18px 40px rgba(59,130,246,0.08)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}>
+                  <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 14, color: "#F9FAFB", marginBottom: 8 }}>{it}</div>
+                </Glass>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* ── CONTACT ── */}
       <section id="contact" style={{ padding: "120px 5vw", background: "rgba(17,24,39,0.4)" }}>
         <div style={{ maxWidth: 800, margin: "0 auto" }}>
           <Reveal>
-            <SectionTitle tag="06 — Contact" title="Let's Build Together" sub="Open to research collaborations, full-time roles, and interesting problems." />
+            <div style={{ textAlign: "center", marginBottom: 24 }}>
+              <div style={{
+                display: "inline-block", fontFamily: "'Space Mono', monospace",
+                fontSize: 11, letterSpacing: 4, textTransform: "uppercase",
+                color: "#3B82F6", marginBottom: 12,
+                padding: "6px 16px", border: "1px solid rgba(59,130,246,0.3)",
+                borderRadius: 99, background: "rgba(59,130,246,0.07)",
+              }}>
+                06 — Contact
+              </div>
+              <h2 style={{
+                fontFamily: "'Syne', sans-serif", fontSize: "clamp(28px, 5vw, 48px)",
+                fontWeight: 800, lineHeight: 1.1, marginBottom: 12,
+                background: "linear-gradient(90deg,#3B82F6,#8B5CF6)", WebkitBackgroundClip: "text", color: "transparent",
+                backgroundSize: "200% 100%", animation: "gradient-shift 3s linear infinite",
+              }}>Let's Build Together 🤝</h2>
+              <p style={{ color: "#9CA3AF", fontSize: 16, maxWidth: 640, margin: "0 auto" }}>Open to research collaborations, project work, academic opportunities, and professional connections.</p>
+              <div style={{ marginTop: 16 }}>
+                <a href={"mailto:232311314@vu.edu.bd,misajib0493@gmail.com?subject=" + encodeURIComponent("Research Collaboration") + "&body=" + encodeURIComponent("Hi Md Mohaiminul Islam Sajib,%0A%0AI'd like to discuss a research collaboration.\n\nRegards,%0A[Your Name]")}
+                  style={{ display: "inline-block", padding: "10px 22px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.06)",
+                    background: "linear-gradient(90deg, rgba(59,130,246,0.08), rgba(139,92,246,0.08))", color: "#F9FAFB",
+                    fontFamily: "'Space Mono', monospace", fontSize: 13, letterSpacing: 1, transition: "all 0.18s", cursor: "none", textDecoration: "none" }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 14px 30px rgba(59,130,246,0.06)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}>
+                  Start a Research Chat ✉️
+                </a>
+              </div>
+            </div>
           </Reveal>
           <Reveal delay={100}>
-            <Glass style={{ padding: 48 }}>
+            <Glass id="contactForm" style={{ padding: 48 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
                 {[
-                  { label: "Your Name", key: "name", type: "text", placeholder: "John Doe" },
-                  { label: "Email Address", key: "email", type: "email", placeholder: "john@example.com" },
+                  { label: "Your Name", key: "name", type: "text", placeholder: "Your name" },
+                  { label: "Email Address", key: "email", type: "email", placeholder: "232311314@vu.edu.bd" },
                 ].map(f => (
                   <div key={f.key}>
                     <label style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#9CA3AF", letterSpacing: 2, display: "block", marginBottom: 8 }}>{f.label}</label>
@@ -1137,11 +1286,12 @@ export default function Portfolio() {
 
               <div style={{ display: "flex", justifyContent: "center", gap: 32, marginTop: 36, flexWrap: "wrap" }}>
                 {[
-                  { label: "alex@mit.edu", icon: "✉" },
-                  { label: "github.com/alexchen", icon: "⌥" },
-                  { label: "linkedin.com/in/alexchen", icon: "in" },
+                  { label: "232311314@vu.edu.bd", icon: "✉", href: "mailto:232311314@vu.edu.bd" },
+                  { label: "misajib0493@gmail.com", icon: "✉", href: "mailto:misajib0493@gmail.com" },
+                  { label: "github.com/misajib", icon: "⌥", href: "https://github.com/misajib" },
+                  { label: "linkedin.com/in/muhammad-mohaiminul-islam-sajib-972a60317", icon: "in", href: "https://www.linkedin.com/in/muhammad-mohaiminul-islam-sajib-972a60317/" },
                 ].map(l => (
-                  <a key={l.label} href="#" style={{
+                  <a key={l.label} href={l.href} target={l.href.startsWith("mailto:") ? undefined : "_blank"} rel={l.href.startsWith("mailto:") ? undefined : "noopener noreferrer"} style={{
                     display: "flex", alignItems: "center", gap: 8,
                     color: "#9CA3AF", textDecoration: "none",
                     fontFamily: "'Space Mono',monospace", fontSize: 11,
@@ -1167,8 +1317,9 @@ export default function Portfolio() {
         flexWrap: "wrap", gap: 16, position: "relative", zIndex: 2,
       }}>
         <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 16, background: "linear-gradient(135deg,#3B82F6,#22D3EE)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Pioneer QuestZen</div>
-        <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#4B5563" }}>
-          © {new Date().getFullYear()} Md Mohaiminul Islam Sajib · Crafted with precision
+        <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#4B5563", display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div>© {new Date().getFullYear()} Muhammad Mohaiminul Islam Sajib · Crafted with precision</div>
+          <a href="mailto:232311314@vu.edu.bd,misajib0493@gmail.com" style={{ color: "#9CA3AF", textDecoration: "none", fontFamily: "'Space Mono',monospace", fontSize: 11 }} onMouseEnter={e => e.currentTarget.style.color = '#3B82F6'} onMouseLeave={e => e.currentTarget.style.color = '#9CA3AF'}>232311314@vu.edu.bd</a>
         </div>
         <button onClick={() => scrollTo("hero")} style={{
           padding: "8px 20px", borderRadius: 99, background: "rgba(59,130,246,0.1)",
