@@ -587,6 +587,16 @@ export default function Portfolio() {
 
   const handleSend = (e) => {
     e.preventDefault();
+    const recipientList = "232311314@vu.edu.bd,misajib0493@gmail.com";
+    const subject = `Research collaboration inquiry from ${formState.name || "a visitor"}`;
+    const body = [
+      `Name: ${formState.name || "N/A"}`,
+      `Email: ${formState.email || "N/A"}`,
+      "",
+      formState.msg || "",
+    ].join("\n");
+
+    window.location.href = `mailto:${recipientList}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     setFormSent(true);
     setTimeout(() => setFormSent(false), 3000);
     setFormState({ name: "", email: "", msg: "" });
@@ -652,17 +662,18 @@ export default function Portfolio() {
                 {l}
               </button>
             ))}
-            <a href={"mailto:232311314@vu.edu.bd,misajib0493@gmail.com?subject=" + encodeURIComponent("Research Collaboration") + "&body=" + encodeURIComponent("Hi Md Mohaiminul Islam Sajib,%0A%0AI'd like to discuss a research collaboration.%0A%0ARegards,%0A[Your Name]")}
+            <button
+              onClick={() => scrollTo("contact")}
               style={{
                 display: "inline-block", padding: "8px 20px", borderRadius: 99, border: "1px solid #3B82F6",
                 background: "rgba(59,130,246,0.1)", color: "#3B82F6",
                 fontFamily: "'Space Mono', monospace", fontSize: 11,
-                letterSpacing: 1, transition: "all 0.2s", cursor: "none", textDecoration: "none",
+                letterSpacing: 1, transition: "all 0.2s", cursor: "none",
               }}
               onMouseEnter={e => { e.currentTarget.style.background = "#3B82F6"; e.currentTarget.style.color = "#fff"; }}
               onMouseLeave={e => { e.currentTarget.style.background = "rgba(59,130,246,0.1)"; e.currentTarget.style.color = "#3B82F6"; }}>
               Collaborate With Me 🤝
-            </a>
+            </button>
           </div>
         </div>
       </nav>
