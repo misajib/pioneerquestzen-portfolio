@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
+import emailjs from "@emailjs/browser";
 
 // ─── Utility: cn ───────────────────────────────────────────────────────────
 const cn = (...classes) => classes.filter(Boolean).join(" ");
@@ -585,22 +586,38 @@ export default function Portfolio() {
     return () => window.removeEventListener("scroll", handler);
   }, []);
 
-  const handleSend = (e) => {
-    e.preventDefault();
-    const recipientList = "232311314@vu.edu.bd,misajib0493@gmail.com";
-    const subject = `Research collaboration inquiry from ${formState.name || "a visitor"}`;
-    const body = [
-      `Name: ${formState.name || "N/A"}`,
-      `Email: ${formState.email || "N/A"}`,
-      "",
-      formState.msg || "",
-    ].join("\n");
+  const handleSend = async (e) => {
+  e.preventDefault();
 
-    window.location.href = `mailto:${recipientList}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  try {
+    const result = await emailjs.send(
+      import.meta.env.VITE_EMAILJS_SERVICE_ID,
+      import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+      {
+        from_name: formState.name,
+        from_email: formState.email,
+        subject: "Portfolio Contact Message",
+        message: formState.msg,
+      },
+      import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+    );
+
+    console.log("SUCCESS!", result.text);
+
     setFormSent(true);
+
+    setFormState({
+      name: "",
+      email: "",
+      msg: "",
+    });
+
     setTimeout(() => setFormSent(false), 3000);
-    setFormState({ name: "", email: "", msg: "" });
-  };
+  } catch (error) {
+    console.error("FAILED...", error);
+    alert("Failed to send message. Please try again.");
+  }
+};
 
   if (!loaded) return <LoadingScreen onDone={() => setLoaded(true)} />;
 
