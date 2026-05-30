@@ -10,6 +10,8 @@ import {
 
 import {
   SiKaggle,
+  SiCodeforces,
+  SiLeetcode,
   SiOrcid,
   SiGooglescholar
 } from "react-icons/si";
@@ -575,6 +577,45 @@ function SectionTitle({ tag, title, sub }) {
   );
 }
 
+// ─── Email Picker Modal ─────────────────────────────────────────────────────
+function EmailPicker({ emails = [], previewEmail, onSelect, onSave, onClose, savedEmail }) {
+  return (
+    <div style={{ position: "fixed", inset: 0, zIndex: 20000, background: "rgba(2,6,23,0.6)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ width: 520, maxWidth: "92%", borderRadius: 12, padding: 20, background: "rgba(11,15,25,0.95)", border: "1px solid rgba(255,255,255,0.06)" }}>
+        <h3 style={{ marginBottom: 8, fontFamily: "'Syne',sans-serif", fontSize: 18 }}>Choose an email</h3>
+        <p style={{ color: "#9CA3AF", fontSize: 13, marginBottom: 12 }}>Click an address to preview. Use Save to remember a preferred address.</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 }}>
+          {emails.map((em) => (
+            <div key={em} onClick={() => onSelect(em)} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", borderRadius: 8, background: previewEmail === em ? "rgba(59,130,246,0.08)" : "rgba(255,255,255,0.02)", cursor: "pointer", border: previewEmail === em ? "1px solid rgba(59,130,246,0.18)" : "1px solid rgba(255,255,255,0.04)" }}>
+              <div style={{ color: "#F9FAFB", fontFamily: "'Space Mono',monospace" }}>{em}</div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <button onClick={(e) => { e.stopPropagation(); onSave(em); }} style={{ padding: "6px 10px", borderRadius: 8, background: savedEmail === em ? "#10B981" : "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)", color: savedEmail === em ? "#fff" : "#F9FAFB", cursor: "pointer" }}>{savedEmail === em ? "Saved" : "Save"}</button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {previewEmail && (
+          <div style={{ marginTop: 8, padding: 12, borderRadius: 8, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.04)" }}>
+            <div style={{ color: "#9CA3AF", fontSize: 13, marginBottom: 8 }}>Preview</div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+              <div style={{ color: "#F9FAFB", fontFamily: "'Space Mono',monospace" }}>{previewEmail}</div>
+              <div style={{ display: "flex", gap: 8 }}>
+                <a href={`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(previewEmail)}`} target="_blank" rel="noreferrer" style={{ padding: "8px 12px", borderRadius: 8, background: "linear-gradient(135deg,#3B82F6,#8B5CF6)", color: "#fff", textDecoration: "none" }}>Compose in Gmail</a>
+                <button onClick={() => { onClose(); document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' }); }} style={{ padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.04)", color: "#F9FAFB", border: "1px solid rgba(255,255,255,0.06)" }}>Back to Home</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 12 }}>
+          <button onClick={onClose} style={{ padding: "8px 12px", borderRadius: 8, background: "rgba(255,255,255,0.04)", color: "#F9FAFB", border: "1px solid rgba(255,255,255,0.06)" }}>Close</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── MAIN PORTFOLIO ──────────────────────────────────────────────────────────
 export default function Portfolio() {
   const [loaded, setLoaded] = useState(false);
@@ -586,6 +627,11 @@ export default function Portfolio() {
   const [formSuccess, setFormSuccess] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [formSent, setFormSent] = useState(false);
+  const [showEmailPicker, setShowEmailPicker] = useState(false);
+  const [previewEmail, setPreviewEmail] = useState(null);
+  const [savedEmail, setSavedEmail] = useState(() => {
+    try { return localStorage.getItem("preferredEmail") || null; } catch (e) { return null; }
+  });
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -673,6 +719,11 @@ export default function Portfolio() {
       setIsSending(false);
     }
   };
+
+  const openEmailPicker = () => { setPreviewEmail(null); setShowEmailPicker(true); };
+  const closeEmailPicker = () => setShowEmailPicker(false);
+  const handleSelectEmail = (em) => setPreviewEmail(em);
+  const handleSaveEmail = (em) => { try { localStorage.setItem("preferredEmail", em); setSavedEmail(em); } catch (e) { console.error(e); } };
 
   if (!loaded) return <LoadingScreen onDone={() => setLoaded(true)} />;
 
@@ -873,13 +924,13 @@ export default function Portfolio() {
               </a>
             </div>
 
-            {/* Social */}
+            {/* Social
             <div style={{ display: "flex", gap: 16 }}>
               {[
                 { label: "GH", color: "#F9FAFB", url: "https://github.com/misajib" },
                 { label: "LI", color: "#0077B5", url: "https://www.linkedin.com/in/muhammad-mohaiminul-islam-sajib-972a60317/" },
                 { label: "KG", color: "#20BEFF", url: "https://www.kaggle.com/misajib" },
-                { label: "GM", color: "#EA4335", url: "mailto:232311314@vu.edu.bd,misajib0493@gmail.com" },
+                { label: "GM", color: "#EA4335", url: "https://mail.google.com/mail/?view=cm&fs=1&to=232311314@vu.edu.bd,misajib0493@gmail.com" },
               ].map(s => (
                 <a key={s.label} href={s.url} style={{
                   width: 44, height: 44, borderRadius: 12,
@@ -894,7 +945,158 @@ export default function Portfolio() {
                   {s.label}
                 </a>
               ))}
+            </div> */}
+            {/* Social */}
+            <div style={{
+              display: "flex",
+              gap: 16,
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              padding: "15px 0",
+              minHeight: "70px",
+              marginBottom: "30px",
+              position: "relative",
+              zIndex: 10,
+            }}>
+              {[
+                {
+                  icon: <FaGithub size={22} />,
+                  color: "#F9FAFB",
+                  url: "https://github.com/misajib",
+                  name: "GitHub",
+                },
+                {
+                  icon: <FaLinkedin size={22} />,
+                  color: "#0077B5",
+                  url: "https://www.linkedin.com/in/muhammad-mohaiminul-islam-sajib-972a60317/",
+                  name: "LinkedIn",
+                },
+                {
+                  icon: <SiGooglescholar size={22} />,
+                  color: "#4285F4",
+                  url: "YOUR_GOOGLE_SCHOLAR_LINK",
+                  name: "Google Scholar",
+                },
+                {
+                  icon: <SiOrcid size={22} />,
+                  color: "#A6CE39",
+                  url: "YOUR_ORCID_LINK",
+                  name: "ORCID",
+                },
+                {
+                  icon: <FaResearchgate size={22} />,
+                  color: "#00CCBB",
+                  url: "YOUR_RESEARCHGATE_LINK",
+                  name: "ResearchGate",
+                },
+                {
+                  icon: <SiKaggle size={22} />,
+                  color: "#20BEFF",
+                  url: "https://www.kaggle.com/misajib",
+                  name: "Kaggle",
+                },
+                {
+                  icon: <SiCodeforces size={22} />,
+                  color: "#1F8ACB",
+                  url: "YOUR_CODEFORCES_LINK",
+                  name: "Codeforces",
+                },
+                {
+                  icon: <SiLeetcode size={22} />,
+                  color: "#FFA116",
+                  url: "YOUR_LEETCODE_LINK",
+                  name: "LeetCode",
+                },
+                {
+                  icon: <MdEmail size={22} />,
+                  color: "#EA4335",
+                    url: "https://mail.google.com/mail/?view=cm&fs=1&to=misajib0493@gmail.com",
+                  name: "Email",
+                },
+              ].map((s) => (
+                  s.name === 'Email' ? (
+                    <button
+                      key={s.name}
+                      onClick={(e) => { e.preventDefault(); openEmailPicker(); }}
+                      title={s.name}
+                      style={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 14,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "rgba(255,255,255,0.05)",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        color: "#9CA3AF",
+                        textDecoration: "none",
+                        transition: "all 0.3s ease",
+                        backdropFilter: "blur(12px)",
+                        cursor: "pointer",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = s.color;
+                        e.currentTarget.style.color = s.color;
+                        e.currentTarget.style.boxShadow = `0 0 20px ${s.color}40`;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor =
+                          "rgba(255,255,255,0.08)";
+                        e.currentTarget.style.color = "#9CA3AF";
+                        e.currentTarget.style.boxShadow = "none";
+                      }}
+                    >
+                      {s.icon}
+                    </button>
+                  ) : (
+                    <a
+                      key={s.name}
+                      href={s.url}
+                      target={s.url && s.url.startsWith("http") ? "_blank" : undefined}
+                      rel="noopener noreferrer"
+                      title={s.name}
+                      style={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 14,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "rgba(255,255,255,0.05)",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        color: "#9CA3AF",
+                        textDecoration: "none",
+                        transition: "all 0.3s ease",
+                        backdropFilter: "blur(12px)",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = s.color;
+                        e.currentTarget.style.color = s.color;
+                        e.currentTarget.style.boxShadow = `0 0 20px ${s.color}40`;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor =
+                          "rgba(255,255,255,0.08)";
+                        e.currentTarget.style.color = "#9CA3AF";
+                        e.currentTarget.style.boxShadow = "none";
+                      }}
+                    >
+                      {s.icon}
+                    </a>
+                  )
+              ))}
             </div>
+              {showEmailPicker && (
+                <EmailPicker
+                  emails={["232311314@vu.edu.bd", "misajib0493@gmail.com"]}
+                  previewEmail={previewEmail}
+                  onSelect={handleSelectEmail}
+                  onSave={handleSaveEmail}
+                  onClose={closeEmailPicker}
+                  savedEmail={savedEmail}
+                />
+              )}
           </div>
 
           {/* Right — avatar */}
@@ -959,6 +1161,7 @@ export default function Portfolio() {
 
         {/* Stats row */}
         <div style={{
+          marginTop: "40px",
           position: "absolute", bottom: 0, left: 0, right: 0,
           borderTop: "1px solid rgba(255,255,255,0.05)",
           background: "rgba(11,15,25,0.6)", backdropFilter: "blur(10px)",
@@ -1207,7 +1410,7 @@ export default function Portfolio() {
           </Reveal>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 20 }}>
             {ACHIEVEMENTS.map((a, i) => (
-              <Reveal key={a.title} delay={i * 80}>
+              <Reveal key={`${a.title}-${i}`} delay={i * 80}>
                 <Glass style={{ padding: 24, display: "flex", gap: 18, alignItems: "flex-start" }}>
                   <div style={{
                     fontSize: 30, width: 56, height: 56, borderRadius: 14, flexShrink: 0,
@@ -1311,7 +1514,7 @@ export default function Portfolio() {
               }}>Let's Build Together 🤝</h2>
               <p style={{ color: "#9CA3AF", fontSize: 16, maxWidth: 640, margin: "0 auto" }}>Open to research collaborations, project work, academic opportunities, and professional connections.</p>
               <div style={{ marginTop: 16 }}>
-                <a href={"mailto:232311314@vu.edu.bd,misajib0493@gmail.com?subject=" + encodeURIComponent("Research Collaboration") + "&body=" + encodeURIComponent("Hi Md Mohaiminul Islam Sajib,%0A%0AI'd like to discuss a research collaboration.\n\nRegards,%0A[Your Name]")}
+                <a href={"https://mail.google.com/mail/?view=cm&fs=1&to=232311314@vu.edu.bd,misajib0493@gmail.com&subject=" + encodeURIComponent("Research Collaboration") + "&body=" + encodeURIComponent("Hi Md Mohaiminul Islam Sajib,%0A%0AI'd like to discuss a research collaboration.\n\nRegards,%0A[Your Name]")}
                   style={{
                     display: "inline-block", padding: "10px 22px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.06)",
                     background: "linear-gradient(90deg, rgba(59,130,246,0.08), rgba(139,92,246,0.08))", color: "#F9FAFB",
@@ -1327,92 +1530,92 @@ export default function Portfolio() {
           <Reveal delay={100}>
             <Glass id="contactForm" style={{ padding: 48 }}>
               <form onSubmit={handleSend}>
-              {formError && (
-                <div style={{
-                  marginBottom: 20,
-                  padding: "14px 16px",
-                  borderRadius: 14,
-                  border: "1px solid rgba(239,68,68,0.35)",
-                  background: "rgba(239,68,68,0.08)",
-                  boxShadow: "0 0 0 1px rgba(239,68,68,0.12), 0 12px 30px rgba(239,68,68,0.12)",
-                  color: "#F9FAFB",
-                  fontFamily: "'Plus Jakarta Sans',sans-serif",
-                  fontSize: 14,
-                  lineHeight: 1.6,
-                  animation: "fade-in-card 0.28s ease",
-                }}>
-                  ⚠️ {formError}
-                </div>
-              )}
-
-              {formSuccess && (
-                <div style={{
-                  marginBottom: 20,
-                  padding: "14px 16px",
-                  borderRadius: 14,
-                  border: "1px solid rgba(16,185,129,0.35)",
-                  background: "rgba(16,185,129,0.08)",
-                  boxShadow: "0 0 0 1px rgba(16,185,129,0.12), 0 12px 30px rgba(16,185,129,0.12)",
-                  color: "#F9FAFB",
-                  fontFamily: "'Plus Jakarta Sans',sans-serif",
-                  fontSize: 14,
-                  lineHeight: 1.6,
-                  animation: "fade-in-card 0.28s ease",
-                }}>
-                  ✓ {formSuccess}
-                </div>
-              )}
-
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
-                {[
-                  { label: "Your Name", key: "name", type: "text", placeholder: "Your name" },
-                  { label: "Email Address", key: "email", type: "email", placeholder: "232311314@vu.edu.bd" },
-                ].map(f => (
-                  <div key={f.key}>
-                    <label style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#9CA3AF", letterSpacing: 2, display: "block", marginBottom: 8 }}>{f.label}</label>
-                    <input type={f.type} placeholder={f.placeholder} value={formState[f.key]}
-                      onChange={e => handleFieldChange(f.key, e.target.value)}
-                      style={{
-                        width: "100%", padding: "14px 18px", borderRadius: 12,
-                        background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)",
-                        color: "#F9FAFB", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14,
-                        outline: "none", transition: "border-color 0.2s",
-                      }}
-                      onFocus={e => e.target.style.borderColor = "rgba(59,130,246,0.6)"}
-                      onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.1)"} />
+                {formError && (
+                  <div style={{
+                    marginBottom: 20,
+                    padding: "14px 16px",
+                    borderRadius: 14,
+                    border: "1px solid rgba(239,68,68,0.35)",
+                    background: "rgba(239,68,68,0.08)",
+                    boxShadow: "0 0 0 1px rgba(239,68,68,0.12), 0 12px 30px rgba(239,68,68,0.12)",
+                    color: "#F9FAFB",
+                    fontFamily: "'Plus Jakarta Sans',sans-serif",
+                    fontSize: 14,
+                    lineHeight: 1.6,
+                    animation: "fade-in-card 0.28s ease",
+                  }}>
+                    ⚠️ {formError}
                   </div>
-                ))}
-              </div>
-              <div style={{ marginBottom: 28 }}>
-                <label style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#9CA3AF", letterSpacing: 2, display: "block", marginBottom: 8 }}>Message</label>
-                <textarea placeholder="Tell me about your project or opportunity..." rows={5} value={formState.msg}
-                  onChange={e => handleFieldChange("msg", e.target.value)}
-                  style={{
-                    width: "100%", padding: "14px 18px", borderRadius: 12, resize: "vertical",
-                    background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)",
-                    color: "#F9FAFB", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14,
-                    outline: "none", transition: "border-color 0.2s",
-                  }}
-                  onFocus={e => e.target.style.borderColor = "rgba(59,130,246,0.6)"}
-                  onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.1)"} />
-              </div>
-              <button type="submit" disabled={isSending} style={{
-                width: "100%", padding: "16px", borderRadius: 12,
-                background: formSent ? "linear-gradient(135deg,#10B981,#059669)" : "linear-gradient(135deg,#3B82F6,#8B5CF6)",
-                border: "none", color: "#fff",
-                fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 15,
-                boxShadow: formSent ? "0 0 30px rgba(16,185,129,0.4)" : "0 0 30px rgba(59,130,246,0.35)",
-                transition: "all 0.4s", cursor: isSending ? "not-allowed" : "none",
-                opacity: isSending ? 0.85 : 1,
-              }}>
-                {isSending ? "Sending..." : formSent ? "✓ Message Sent!" : "Send Message →"}
-              </button>
+                )}
+
+                {formSuccess && (
+                  <div style={{
+                    marginBottom: 20,
+                    padding: "14px 16px",
+                    borderRadius: 14,
+                    border: "1px solid rgba(16,185,129,0.35)",
+                    background: "rgba(16,185,129,0.08)",
+                    boxShadow: "0 0 0 1px rgba(16,185,129,0.12), 0 12px 30px rgba(16,185,129,0.12)",
+                    color: "#F9FAFB",
+                    fontFamily: "'Plus Jakarta Sans',sans-serif",
+                    fontSize: 14,
+                    lineHeight: 1.6,
+                    animation: "fade-in-card 0.28s ease",
+                  }}>
+                    ✓ {formSuccess}
+                  </div>
+                )}
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+                  {[
+                    { label: "Your Name", key: "name", type: "text", placeholder: "Your name" },
+                    { label: "Email Address", key: "email", type: "email", placeholder: "232311314@vu.edu.bd" },
+                  ].map(f => (
+                    <div key={f.key}>
+                      <label style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#9CA3AF", letterSpacing: 2, display: "block", marginBottom: 8 }}>{f.label}</label>
+                      <input type={f.type} placeholder={f.placeholder} value={formState[f.key]}
+                        onChange={e => handleFieldChange(f.key, e.target.value)}
+                        style={{
+                          width: "100%", padding: "14px 18px", borderRadius: 12,
+                          background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)",
+                          color: "#F9FAFB", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14,
+                          outline: "none", transition: "border-color 0.2s",
+                        }}
+                        onFocus={e => e.target.style.borderColor = "rgba(59,130,246,0.6)"}
+                        onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.1)"} />
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginBottom: 28 }}>
+                  <label style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#9CA3AF", letterSpacing: 2, display: "block", marginBottom: 8 }}>Message</label>
+                  <textarea placeholder="Tell me about your project or opportunity..." rows={5} value={formState.msg}
+                    onChange={e => handleFieldChange("msg", e.target.value)}
+                    style={{
+                      width: "100%", padding: "14px 18px", borderRadius: 12, resize: "vertical",
+                      background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)",
+                      color: "#F9FAFB", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14,
+                      outline: "none", transition: "border-color 0.2s",
+                    }}
+                    onFocus={e => e.target.style.borderColor = "rgba(59,130,246,0.6)"}
+                    onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.1)"} />
+                </div>
+                <button type="submit" disabled={isSending} style={{
+                  width: "100%", padding: "16px", borderRadius: 12,
+                  background: formSent ? "linear-gradient(135deg,#10B981,#059669)" : "linear-gradient(135deg,#3B82F6,#8B5CF6)",
+                  border: "none", color: "#fff",
+                  fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 15,
+                  boxShadow: formSent ? "0 0 30px rgba(16,185,129,0.4)" : "0 0 30px rgba(59,130,246,0.35)",
+                  transition: "all 0.4s", cursor: isSending ? "not-allowed" : "none",
+                  opacity: isSending ? 0.85 : 1,
+                }}>
+                  {isSending ? "Sending..." : formSent ? "✓ Message Sent!" : "Send Message →"}
+                </button>
               </form>
 
               <div style={{ display: "flex", justifyContent: "center", gap: 32, marginTop: 36, flexWrap: "wrap" }}>
                 {[
-                  { label: "232311314@vu.edu.bd", icon: "✉", href: "mailto:232311314@vu.edu.bd" },
-                  { label: "misajib0493@gmail.com", icon: "✉", href: "mailto:misajib0493@gmail.com" },
+                  { label: "232311314@vu.edu.bd", icon: "✉", href: "https://mail.google.com/mail/?view=cm&fs=1&to=232311314@vu.edu.bd" },
+                  { label: "misajib0493@gmail.com", icon: "✉", href: "https://mail.google.com/mail/?view=cm&fs=1&to=misajib0493@gmail.com" },
                   { label: "github.com/misajib", icon: "⌥", href: "https://github.com/misajib" },
                   { label: "linkedin.com/in/muhammad-mohaiminul-islam-sajib-972a60317", icon: "in", href: "https://www.linkedin.com/in/muhammad-mohaiminul-islam-sajib-972a60317/" },
                 ].map(l => (
@@ -1444,7 +1647,7 @@ export default function Portfolio() {
         <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 16, background: "linear-gradient(135deg,#3B82F6,#22D3EE)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Pioneer QuestZen</div>
         <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#4B5563", display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div>© {new Date().getFullYear()} Muhammad Mohaiminul Islam Sajib · Crafted with precision</div>
-          <a href="mailto:232311314@vu.edu.bd,misajib0493@gmail.com" style={{ color: "#9CA3AF", textDecoration: "none", fontFamily: "'Space Mono',monospace", fontSize: 11 }} onMouseEnter={e => e.currentTarget.style.color = '#3B82F6'} onMouseLeave={e => e.currentTarget.style.color = '#9CA3AF'}>232311314@vu.edu.bd</a>
+          <a href="https://mail.google.com/mail/?view=cm&fs=1&to=232311314@vu.edu.bd,misajib0493@gmail.com" style={{ color: "#9CA3AF", textDecoration: "none", fontFamily: "'Space Mono',monospace", fontSize: 11 }} onMouseEnter={e => e.currentTarget.style.color = '#3B82F6'} onMouseLeave={e => e.currentTarget.style.color = '#9CA3AF'}>232311314@vu.edu.bd</a>
         </div>
         <button onClick={() => scrollTo("hero")} style={{
           padding: "8px 20px", borderRadius: 99, background: "rgba(59,130,246,0.1)",
