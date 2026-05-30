@@ -1161,7 +1161,7 @@ export default function Portfolio() {
 
         {/* Stats row */}
         <div style={{
-          // marginTop: "40px",
+          
           position: "absolute", bottom: 0, left: 0, right: 0,
           borderTop: "1px solid rgba(255,255,255,0.05)",
           background: "rgba(11,15,25,0.6)", backdropFilter: "blur(10px)",
