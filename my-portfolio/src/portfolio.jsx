@@ -2,6 +2,23 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 
+import {
+  FaGithub,
+  FaLinkedin,
+  FaResearchgate
+} from "react-icons/fa";
+
+import {
+  SiKaggle,
+  SiOrcid,
+  SiGooglescholar
+} from "react-icons/si";
+
+import { MdEmail } from "react-icons/md";
+
+
+
+
 // ─── Utility: cn ───────────────────────────────────────────────────────────
 const cn = (...classes) => classes.filter(Boolean).join(" ");
 
@@ -565,7 +582,29 @@ export default function Portfolio() {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
   const [formState, setFormState] = useState({ name: "", email: "", msg: "" });
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
+  const [isSending, setIsSending] = useState(false);
   const [formSent, setFormSent] = useState(false);
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const getFormError = (state) => {
+    if (!state.name.trim()) return "Please enter your name.";
+    if (!state.email.trim()) return "Please enter your email address.";
+    if (!emailRegex.test(state.email.trim())) return "Please enter a valid email address.";
+    if (!state.msg.trim()) return "Please enter your message.";
+    return "";
+  };
+
+  const handleFieldChange = (field, value) => {
+    setFormState((current) => {
+      const nextState = { ...current, [field]: value };
+      setFormError(getFormError(nextState));
+      if (formSuccess) setFormSuccess("");
+      return nextState;
+    });
+  };
 
   const scrollTo = (id) => {
     setMobileMenu(false);
@@ -587,37 +626,53 @@ export default function Portfolio() {
   }, []);
 
   const handleSend = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const result = await emailjs.send(
-      import.meta.env.VITE_EMAILJS_SERVICE_ID,
-      import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-      {
-        from_name: formState.name,
-        from_email: formState.email,
-        subject: "Portfolio Contact Message",
-        message: formState.msg,
-      },
-      import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-    );
+    const validationError = getFormError(formState);
+    if (validationError) {
+      setFormError(validationError);
+      setFormSuccess("");
+      return;
+    }
 
-    console.log("SUCCESS!", result.text);
+    try {
+      setIsSending(true);
+      setFormError("");
+      setFormSuccess("");
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        {
+          from_name: formState.name,
+          from_email: formState.email,
+          subject: "Portfolio Contact Message",
+          message: formState.msg,
+        },
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
 
-    setFormSent(true);
+      setFormSent(true);
+      setFormSuccess("Message sent successfully. I'll get back to you soon.");
 
-    setFormState({
-      name: "",
-      email: "",
-      msg: "",
-    });
+      setFormState({
+        name: "",
+        email: "",
+        msg: "",
+      });
 
-    setTimeout(() => setFormSent(false), 3000);
-  } catch (error) {
-    console.error("FAILED...", error);
-    alert("Failed to send message. Please try again.");
-  }
-};
+      setTimeout(() => {
+        setFormSent(false);
+        setFormSuccess("");
+      }, 3000);
+
+    } catch (error) {
+      console.error("EmailJS Error:", error);
+      setFormError("Failed to send message. Please try again.");
+      setFormSuccess("");
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   if (!loaded) return <LoadingScreen onDone={() => setLoaded(true)} />;
 
@@ -636,6 +691,7 @@ export default function Portfolio() {
         @keyframes spin { to{transform:rotate(360deg)} }
         @keyframes pulse-ring { 0%{transform:scale(1);opacity:0.6} 100%{transform:scale(1.6);opacity:0} }
         @keyframes blob { 0%,100%{border-radius:60% 40% 30% 70%/60% 30% 70% 40%} 50%{border-radius:30% 60% 70% 40%/50% 60% 30% 60%} }
+        @keyframes fade-in-card { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
         .blob { animation: blob 8s ease-in-out infinite; }
         .float { animation: float 6s ease-in-out infinite; }
         .nav-link { position:relative; }
@@ -1256,9 +1312,11 @@ export default function Portfolio() {
               <p style={{ color: "#9CA3AF", fontSize: 16, maxWidth: 640, margin: "0 auto" }}>Open to research collaborations, project work, academic opportunities, and professional connections.</p>
               <div style={{ marginTop: 16 }}>
                 <a href={"mailto:232311314@vu.edu.bd,misajib0493@gmail.com?subject=" + encodeURIComponent("Research Collaboration") + "&body=" + encodeURIComponent("Hi Md Mohaiminul Islam Sajib,%0A%0AI'd like to discuss a research collaboration.\n\nRegards,%0A[Your Name]")}
-                  style={{ display: "inline-block", padding: "10px 22px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.06)",
+                  style={{
+                    display: "inline-block", padding: "10px 22px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.06)",
                     background: "linear-gradient(90deg, rgba(59,130,246,0.08), rgba(139,92,246,0.08))", color: "#F9FAFB",
-                    fontFamily: "'Space Mono', monospace", fontSize: 13, letterSpacing: 1, transition: "all 0.18s", cursor: "none", textDecoration: "none" }}
+                    fontFamily: "'Space Mono', monospace", fontSize: 13, letterSpacing: 1, transition: "all 0.18s", cursor: "none", textDecoration: "none"
+                  }}
                   onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 14px 30px rgba(59,130,246,0.06)"; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}>
                   Start a Research Chat ✉️
@@ -1268,6 +1326,43 @@ export default function Portfolio() {
           </Reveal>
           <Reveal delay={100}>
             <Glass id="contactForm" style={{ padding: 48 }}>
+              <form onSubmit={handleSend}>
+              {formError && (
+                <div style={{
+                  marginBottom: 20,
+                  padding: "14px 16px",
+                  borderRadius: 14,
+                  border: "1px solid rgba(239,68,68,0.35)",
+                  background: "rgba(239,68,68,0.08)",
+                  boxShadow: "0 0 0 1px rgba(239,68,68,0.12), 0 12px 30px rgba(239,68,68,0.12)",
+                  color: "#F9FAFB",
+                  fontFamily: "'Plus Jakarta Sans',sans-serif",
+                  fontSize: 14,
+                  lineHeight: 1.6,
+                  animation: "fade-in-card 0.28s ease",
+                }}>
+                  ⚠️ {formError}
+                </div>
+              )}
+
+              {formSuccess && (
+                <div style={{
+                  marginBottom: 20,
+                  padding: "14px 16px",
+                  borderRadius: 14,
+                  border: "1px solid rgba(16,185,129,0.35)",
+                  background: "rgba(16,185,129,0.08)",
+                  boxShadow: "0 0 0 1px rgba(16,185,129,0.12), 0 12px 30px rgba(16,185,129,0.12)",
+                  color: "#F9FAFB",
+                  fontFamily: "'Plus Jakarta Sans',sans-serif",
+                  fontSize: 14,
+                  lineHeight: 1.6,
+                  animation: "fade-in-card 0.28s ease",
+                }}>
+                  ✓ {formSuccess}
+                </div>
+              )}
+
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
                 {[
                   { label: "Your Name", key: "name", type: "text", placeholder: "Your name" },
@@ -1276,7 +1371,7 @@ export default function Portfolio() {
                   <div key={f.key}>
                     <label style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#9CA3AF", letterSpacing: 2, display: "block", marginBottom: 8 }}>{f.label}</label>
                     <input type={f.type} placeholder={f.placeholder} value={formState[f.key]}
-                      onChange={e => setFormState(s => ({ ...s, [f.key]: e.target.value }))}
+                      onChange={e => handleFieldChange(f.key, e.target.value)}
                       style={{
                         width: "100%", padding: "14px 18px", borderRadius: 12,
                         background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)",
@@ -1291,7 +1386,7 @@ export default function Portfolio() {
               <div style={{ marginBottom: 28 }}>
                 <label style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#9CA3AF", letterSpacing: 2, display: "block", marginBottom: 8 }}>Message</label>
                 <textarea placeholder="Tell me about your project or opportunity..." rows={5} value={formState.msg}
-                  onChange={e => setFormState(s => ({ ...s, msg: e.target.value }))}
+                  onChange={e => handleFieldChange("msg", e.target.value)}
                   style={{
                     width: "100%", padding: "14px 18px", borderRadius: 12, resize: "vertical",
                     background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)",
@@ -1301,16 +1396,18 @@ export default function Portfolio() {
                   onFocus={e => e.target.style.borderColor = "rgba(59,130,246,0.6)"}
                   onBlur={e => e.target.style.borderColor = "rgba(255,255,255,0.1)"} />
               </div>
-              <button onClick={handleSend} style={{
+              <button type="submit" disabled={isSending} style={{
                 width: "100%", padding: "16px", borderRadius: 12,
                 background: formSent ? "linear-gradient(135deg,#10B981,#059669)" : "linear-gradient(135deg,#3B82F6,#8B5CF6)",
                 border: "none", color: "#fff",
                 fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 15,
                 boxShadow: formSent ? "0 0 30px rgba(16,185,129,0.4)" : "0 0 30px rgba(59,130,246,0.35)",
-                transition: "all 0.4s", cursor: "none",
+                transition: "all 0.4s", cursor: isSending ? "not-allowed" : "none",
+                opacity: isSending ? 0.85 : 1,
               }}>
-                {formSent ? "✓ Message Sent!" : "Send Message →"}
+                {isSending ? "Sending..." : formSent ? "✓ Message Sent!" : "Send Message →"}
               </button>
+              </form>
 
               <div style={{ display: "flex", justifyContent: "center", gap: 32, marginTop: 36, flexWrap: "wrap" }}>
                 {[
