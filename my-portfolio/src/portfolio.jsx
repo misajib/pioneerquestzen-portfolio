@@ -35,9 +35,9 @@ const SKILLS = {
     { name: "JavaScript", level: 80 }, { name: "Java", level: 50 }, { name: "SQL", level: 82 },
   ],
   "AI / ML / NLP": [
-    { name: "PyTorch", level: 92 }, { name: "TensorFlow", level: 88 },
-    { name: "Scikit-learn", level: 90 }, { name: "Transformers", level: 87 },
-    { name: "LangChain / RAG / LLMs", level: 50 },
+    { name: "PyTorch", level: 92 }, { name: "TensorFlow", level: 90 },
+    { name: "Scikit-learn", level: 60 }, { name: "Transformers", level: 80 },
+    { name: "LangChain / RAG / LLMs", level: 40 },
   ],
   "Web Development": [
     { name: "React.js", level: 91 }, { name: "Vite", level: 86 },
@@ -46,7 +46,7 @@ const SKILLS = {
   ],
   "Tools & Platforms": [
     { name: "Git / GitHub", level: 92 }, { name: "Linux", level: 84 },
-    { name: "Docker", level: 78 }, { name: "Google Colab", level: 88 },
+    { name: "Docker", level: 60 }, { name: "Google Colab", level: 88 },
     { name: "Jupyter Notebook / VS Code", level: 90 },
   ],
   "Competitive Programming": [
@@ -57,7 +57,7 @@ const SKILLS = {
   "Generative AI": [
     { name: "ChatGPT", level: 92 }, { name: "Claude", level: 86 },
     { name: "Gemini / Grok / DeepSeek", level: 84 }, { name: "Stable Diffusion", level: 72 },
-    { name: "Prompt Engineering", level: 88 },
+    { name: "Prompt Engineering", level: 80 },
   ],
 };
 
@@ -96,6 +96,7 @@ const RESEARCH = [
     authors: [AUTHOR_NAME, "Protik Chakroborty"],
     abstract: "Explainable cardiovascular risk prediction work using hybrid learning with mRMR-PCA feature optimization.",
     status: "Published",
+    link: "/xai.pdf",
   },
 
   {
@@ -105,6 +106,7 @@ const RESEARCH = [
     authors: ["Mst. Homai Ara Yesmin", "Md. Nahid Hasan", AUTHOR_NAME, "Md. Yousuf Ali", "Sohanur Rahman", "Protik Chakroborty"],
     abstract: "Deep learning-based license plate recognition system developed for practical computer vision use.",
     status: "Published",
+    link: "/Numberplate.pdf",
   },
   {
     year: "2026",
@@ -113,6 +115,7 @@ const RESEARCH = [
     authors: [AUTHOR_NAME, "Protik Chakroborty", "Md. Adnan Sami", "Md. Abdus Sami Shezan", "Bishal Prosad"],
     abstract: "Monkeypox classification work using diffusion-based augmentation and DenseNet121.",
     status: "Published",
+    link: "/monkeypox.pdf",
   },
   {
     year: "2025",
@@ -121,14 +124,7 @@ const RESEARCH = [
     authors: ["Protik Chakroborty", "Pallab Chowdhury", "Pritom Chakroborty", "Arun Kumar Sikder", AUTHOR_NAME],
     abstract: "Fusion-based deep learning framework for robust lung and colon cancer classification from histopathological images.",
     status: "Published",
-  },
-  {
-    year: "2025",
-    title: "SmartPark: An IoT-Driven Urban Car Parking Solution Using NodeMCU and Android Integration",
-    venue: "Undergraduate Conference on Intelligent Computing & Systems (UCICS 2025)",
-    authors: [AUTHOR_NAME, "Rejaul Karim Reja", "Ruhul Amin", "Abdul-Al Nasheed Qatum", "Mahfuz Ahmad", "Farhana Akter Faiza", "Fatlab Chowdhury"],
-    abstract: "IoT-based smart parking system using NodeMCU, cloud synchronization, and Android integration for real-time parking monitoring.",
-    status: "Published",
+    link: "/BIM.pdf",
   },
 ];
 
@@ -850,7 +846,7 @@ export default function Portfolio() {
             </div>
 
             <p style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, lineHeight: 1.8, maxWidth: 520, marginBottom: 40 }}>
-              Third-year Computer Science and Engineering student at Varendra University focused on artificial intelligence, machine learning, computer vision, natural language processing, and applied research.
+              I’m a third-year Computer Science and Engineering student at Varendra University, exploring AI, machine learning, computer vision, NLP, and applied research to create meaningful human-centered solutions.
             </p>
 
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 48 }}>
@@ -1191,7 +1187,7 @@ export default function Portfolio() {
       <section id="about" style={{ padding: "120px 5vw" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Reveal>
-            <SectionTitle tag="01 — About" title="Who Am I?" sub="Third-year CSE student at Varendra University working across AI, research, and applied software projects." />
+            <SectionTitle tag="01 — About" title="Who Am I?" sub="Third-year CSE student at Varendra University exploring AI, research, and applied intelligent systems." />
           </Reveal>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 24 }}>
             {[
