@@ -5,7 +5,8 @@ import emailjs from "@emailjs/browser";
 import {
   FaGithub,
   FaLinkedin,
-  FaResearchgate
+  FaResearchgate,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 
 import {
@@ -28,6 +29,8 @@ const cn = (...classes) => classes.filter(Boolean).join(" ");
 const NAV_LINKS = ["About", "Skills", "Projects", "Research", "Achievements", "Contact"];
 
 const AUTHOR_NAME = "Md Mohaiminul Islam Sajib";
+
+const getPublicAssetUrl = (fileName) => `${import.meta.env.BASE_URL}${fileName}`;
 
 const SKILLS = {
   "Programming Languages": [
@@ -96,7 +99,7 @@ const RESEARCH = [
     authors: [AUTHOR_NAME, "Protik Chakroborty"],
     abstract: "Explainable cardiovascular risk prediction work using hybrid learning with mRMR-PCA feature optimization.",
     status: "Published",
-    link: "/xai.pdf",
+    localPdf: "xai.pdf",
   },
 
   {
@@ -106,7 +109,7 @@ const RESEARCH = [
     authors: ["Mst. Homai Ara Yesmin", "Md. Nahid Hasan", AUTHOR_NAME, "Md. Yousuf Ali", "Sohanur Rahman", "Protik Chakroborty"],
     abstract: "Deep learning-based license plate recognition system developed for practical computer vision use.",
     status: "Published",
-    link: "/Numberplate.pdf",
+    localPdf: "Numberplate.pdf",
   },
   {
     year: "2026",
@@ -115,7 +118,7 @@ const RESEARCH = [
     authors: [AUTHOR_NAME, "Protik Chakroborty", "Md. Adnan Sami", "Md. Abdus Sami Shezan", "Bishal Prosad"],
     abstract: "Monkeypox classification work using diffusion-based augmentation and DenseNet121.",
     status: "Published",
-    link: "/monkeypox.pdf",
+    localPdf: "monkeypox.pdf",
   },
   {
     year: "2025",
@@ -124,7 +127,19 @@ const RESEARCH = [
     authors: ["Protik Chakroborty", "Pallab Chowdhury", "Pritom Chakroborty", "Arun Kumar Sikder", AUTHOR_NAME],
     abstract: "Fusion-based deep learning framework for robust lung and colon cancer classification from histopathological images.",
     status: "Published",
-    link: "/BIM.pdf",
+    localPdf: "BIM.pdf",
+  },
+  {
+    year: "2025",
+    title: "SmartPark: An IoT-Driven Urban Car Parking Solution Using NodeMCU and Android Integration",
+    venue: "Undergraduate Conference on Intelligent Computing & Systems (UCICS 2025), Varendra University, Bangladesh",
+    authors: [AUTHOR_NAME, "Rejaul Karim Reja", "Ruhul Amin", "Abdul-Al Naheed Qaium", "Mahfuz Ahmad", "Farhana Akter Faiza", "Pallab Chowdhury"],
+    abstract: "An IoT-driven urban car parking solution using NodeMCU for sensor integration, Firebase for cloud synchronization, and an Android application for user interaction.",
+    status: "Published",
+    pubType: "Conference Paper",
+    tags: ["IoT", "Smart City", "Embedded Systems", "Android Development", "Firebase"],
+    link: "https://www.researchgate.net/publication/391010575_SmartPark_An_IoT-Driven_Urban_Car_Parking_Solution_Using_NodeMCU_and_Android_Integration",
+    researchgate: "https://www.researchgate.net/publication/391010575_SmartPark_An_IoT-Driven_Urban_Car_Parking_Solution_Using_NodeMCU_and_Android_Integration",
   },
 ];
 
@@ -140,6 +155,21 @@ const renderAcademicAuthors = (authors) =>
       </span>
     );
   });
+
+// Return the best href for the "Read Paper" button. Prefer local PDF, then ResearchGate, then DOI, then publisher/link.
+const getPaperHref = (r) => {
+  if (!r) return null;
+  // Public PDFs live in /public and must be prefixed with the Vite base path.
+  if (r.localPdf) return getPublicAssetUrl(r.localPdf.replace(/^\/+/, ""));
+  if (r.researchgate) return r.researchgate;
+  if (r.doi) return `https://doi.org/${r.doi}`;
+  if (r.link && /\.pdf($|\?)/i.test(r.link) && !/^https?:/i.test(r.link)) {
+    return getPublicAssetUrl(r.link.replace(/^\/+/, ""));
+  }
+  // avoid accidentally using Google Scholar or profile links
+  if (r.link && !/scholar|google\.com/i.test(r.link)) return r.link;
+  return null;
+};
 
 const ACHIEVEMENTS = [
   { icon: "🎤", title: "Conference Presenter", sub: "IEEE QPAIN 2026, CUET, Chattogram, Bangladesh" },
@@ -863,7 +893,7 @@ export default function Portfolio() {
                 View Projects ↗
               </button>
               <a
-                href={`${import.meta.env.BASE_URL}sajib_cv.pdf`}
+                href={getPublicAssetUrl("sajib_cv.pdf")}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -887,7 +917,7 @@ export default function Portfolio() {
               </a>
 
               <a
-                href={`${import.meta.env.BASE_URL}sajib_cv.pdf`}
+                href={getPublicAssetUrl("sajib_cv.pdf")}
                 download
                 style={{
                   padding: "14px 32px",
@@ -1372,23 +1402,54 @@ export default function Portfolio() {
                       <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#9CA3AF", marginTop: 6 }}>{r.venue}</div>
                     </div>
 
-                    <Glass style={{ padding: 28, flex: 1, transition: "transform 0.25s, box-shadow 0.25s", cursor: "none" }}
+                    <Glass style={{ padding: 28, flex: 1, transition: "transform 0.25s, box-shadow 0.25s", cursor: "none", minHeight: 180 }}
                       onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-8px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(59,130,246,0.12)"; }}
                       onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start", flexWrap: "wrap", marginBottom: 8 }}>
-                        <div>
-                          <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: 18, color: "#F9FAFB", marginBottom: 6 }}>{r.title}</h3>
-                          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 12, color: "#3B82F6", letterSpacing: 1 }}>{renderAcademicAuthors(r.authors)}</div>
+                      <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start", flexWrap: "wrap", marginBottom: 10 }}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: 18, color: "#F9FAFB", margin: 0 }}>{r.title}</h3>
+                          <div style={{ marginTop: 8, fontFamily: "'Space Mono',monospace", fontSize: 13, color: "#9CA3AF", lineHeight: 1.5 }}>{renderAcademicAuthors(r.authors)}</div>
                         </div>
-                        <span style={{ padding: "6px 12px", borderRadius: 999, fontSize: 11, background: r.status === "Published" ? "rgba(16,185,129,0.12)" : "rgba(245,158,11,0.12)", border: `1px solid ${r.status === "Published" ? "rgba(16,185,129,0.28)" : "rgba(245,158,11,0.28)"}`, color: r.status === "Published" ? "#10B981" : "#F59E0B", fontFamily: "'Space Mono',monospace" }}>{r.status}</span>
+                        <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', flexShrink: 0 }}>
+                          <span style={{ padding: "6px 12px", borderRadius: 999, fontSize: 11, background: r.status === "Published" ? "rgba(16,185,129,0.12)" : "rgba(245,158,11,0.12)", border: `1px solid ${r.status === "Published" ? "rgba(16,185,129,0.28)" : "rgba(245,158,11,0.28)"}`, color: r.status === "Published" ? "#10B981" : "#F59E0B", fontFamily: "'Space Mono',monospace" }}>{r.status}</span>
+                          {r.pubType && (
+                            <span style={{ padding: "6px 12px", borderRadius: 999, fontSize: 11, background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", color: "#9CA3AF", fontFamily: "'Space Mono',monospace" }}>{r.pubType}</span>
+                          )}
+                        </div>
                       </div>
-                      <p style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14, lineHeight: 1.7, marginBottom: 12 }}>{r.abstract}</p>
-                      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                        <a href={r.link || "#"} target="_blank" rel="noopener noreferrer" style={{ padding: "8px 12px", fontSize: 12, borderRadius: 10, background: "rgba(59,130,246,0.12)", color: "#3B82F6", textDecoration: "none", border: "1px solid rgba(59,130,246,0.18)", fontFamily: "'Space Mono',monospace" }}>Read Paper ↗</a>
-                        {r.tags && r.tags.map(t => (
-                          <span key={t} style={{ padding: "6px 10px", borderRadius: 8, background: "rgba(255,255,255,0.03)", color: "#9CA3AF", fontFamily: "'Space Mono',monospace", fontSize: 11 }}>{t}</span>
-                        ))}
+
+                      <p style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14, lineHeight: 1.7, margin: "6px 0 16px 0" }}>{r.abstract}</p>
+
+                      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 8 }}>
+                        {(() => {
+                          const paperHref = getPaperHref(r);
+                          const commonStyle = { padding: "8px 12px", fontSize: 12, borderRadius: 10, textDecoration: "none", fontFamily: "'Space Mono',monospace" };
+                          if (paperHref) {
+                            return (
+                              <a href={paperHref} target="_blank" rel="noopener noreferrer" style={{ ...commonStyle, background: "rgba(59,130,246,0.12)", color: "#3B82F6", border: "1px solid rgba(59,130,246,0.18)" }}>
+                                Read Paper <FaExternalLinkAlt style={{ marginLeft: 8, verticalAlign: 'middle' }} />
+                              </a>
+                            );
+                          }
+                          return (
+                            <a href="#" style={{ ...commonStyle, background: "rgba(255,255,255,0.04)", color: "#9CA3AF", border: "1px solid rgba(255,255,255,0.06)", pointerEvents: 'none' }}>
+                              Read Paper <FaExternalLinkAlt style={{ marginLeft: 8, verticalAlign: 'middle' }} />
+                            </a>
+                          );
+                        })()}
+
+                        {r.researchgate && (
+                          <a href={r.researchgate} target="_blank" rel="noopener noreferrer" style={{ padding: "8px 12px", fontSize: 12, borderRadius: 10, background: "rgba(0,204,187,0.12)", color: "#00CCBB", textDecoration: "none", border: "1px solid rgba(0,204,187,0.18)", fontFamily: "'Space Mono',monospace" }}>ResearchGate ↗</a>
+                        )}
                       </div>
+
+                      {r.tags && (
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 6 }}>
+                          {r.tags.map(t => (
+                            <span key={t} style={{ padding: "6px 10px", borderRadius: 8, background: "rgba(255,255,255,0.03)", color: "#9CA3AF", fontFamily: "'Space Mono',monospace", fontSize: 11 }}>{t}</span>
+                          ))}
+                        </div>
+                      )}
                     </Glass>
                   </div>
                 </Reveal>
