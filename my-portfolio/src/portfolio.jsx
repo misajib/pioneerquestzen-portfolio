@@ -139,7 +139,6 @@ const RESEARCH = [
     pubType: "Conference Paper",
     tags: ["IoT", "Smart City", "Embedded Systems", "Android Development", "Firebase"],
     link: "https://www.researchgate.net/publication/391010575_SmartPark_An_IoT-Driven_Urban_Car_Parking_Solution_Using_NodeMCU_and_Android_Integration",
-    researchgate: "https://www.researchgate.net/publication/391010575_SmartPark_An_IoT-Driven_Urban_Car_Parking_Solution_Using_NodeMCU_and_Android_Integration",
   },
 ];
 
