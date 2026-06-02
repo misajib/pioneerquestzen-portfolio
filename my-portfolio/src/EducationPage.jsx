@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import ThemeToggleButton from "./ThemeToggleButton";
 
 function Reveal({ children, delay = 0, className = "" }) {
   const ref = useRef(null);
@@ -39,14 +40,15 @@ function Glass({ children, style = {}, hover = true }) {
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      className="glass-panel"
       style={{
-        background: "rgba(255,255,255,0.03)",
+        background: "var(--surface)",
         backdropFilter: "blur(20px)",
-        border: `1px solid ${hovered && hover ? "rgba(59,130,246,0.5)" : "rgba(255,255,255,0.07)"}`,
+        border: `1px solid ${hovered && hover ? "rgba(59,130,246,0.5)" : "var(--border)"}`,
         borderRadius: 20,
         transition: "all 0.3s ease",
         transform: hovered && hover ? "translateY(-4px)" : "none",
-        boxShadow: hovered && hover ? "0 20px 60px rgba(59,130,246,0.15)" : "0 4px 24px rgba(0,0,0,0.3)",
+        boxShadow: hovered && hover ? "0 20px 60px rgba(59,130,246,0.15)" : "var(--shadow)",
         ...style,
       }}
     >
@@ -270,13 +272,10 @@ const RESEARCH_ACTIVITIES = [
 
 export default function EducationPage() {
   return (
-    <div style={{ background: "#0B0F19", minHeight: "100vh", color: "#F9FAFB", overflowX: "hidden" }}>
+    <div className="theme-scope" style={{ background: "var(--page-bg)", minHeight: "100vh", color: "var(--text-primary)", overflowX: "hidden" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
-        html { scroll-behavior: smooth; }
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #0B0F19; }
+        ::-webkit-scrollbar-track { background: var(--page-bg); }
         ::-webkit-scrollbar-thumb { background: linear-gradient(#3B82F6,#8B5CF6); border-radius: 99px; }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)} }
@@ -293,14 +292,17 @@ export default function EducationPage() {
       <Cursor />
       <ScrollProgress />
 
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "rgba(11,15,25,0.85)", backdropFilter: "blur(24px)", borderBottom: "1px solid rgba(255,255,255,0.05)", padding: "0 5vw" }}>
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "var(--nav-bg)", backdropFilter: "blur(24px)", borderBottom: "1px solid rgba(255,255,255,0.05)", padding: "0 5vw" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", height: 68, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <Link to="/" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 20, background: "linear-gradient(135deg, #3B82F6, #22D3EE)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", letterSpacing: 1, textDecoration: "none" }}>
             Pioneer QuestZen
           </Link>
-          <Link to="/" style={{ padding: "8px 20px", borderRadius: 99, border: "1px solid #3B82F6", background: "rgba(59,130,246,0.1)", color: "#3B82F6", fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: 1, textDecoration: "none" }}>
-            Back to Home
-          </Link>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", justifyContent: "flex-end" }}>
+            <ThemeToggleButton compact />
+            <Link to="/" style={{ padding: "8px 20px", borderRadius: 99, border: "1px solid #3B82F6", background: "rgba(59,130,246,0.1)", color: "#3B82F6", fontFamily: "'Space Mono', monospace", fontSize: 11, letterSpacing: 1, textDecoration: "none" }}>
+              Back to Home
+            </Link>
+          </div>
         </div>
       </nav>
 
@@ -313,19 +315,19 @@ export default function EducationPage() {
             <SectionTitle tag="Education" title="Academic Journey" sub="Same visual language, dedicated academic page, and a structured view of studies, milestones, and scholarly work." />
           </Reveal>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 24, marginBottom: 32 }}>
-            <Reveal delay={0}><Glass style={{ padding: 28 }}><h3 style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, marginBottom: 10, color: "#F9FAFB" }}>Academic Summary</h3><p style={{ color: "#9CA3AF", lineHeight: 1.7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>Third-year undergraduate student in Computer Science and Engineering at Varendra University with a strong research focus on AI, ML, CV, NLP, and applied intelligent systems.</p></Glass></Reveal>
-            <Reveal delay={80}><Glass style={{ padding: 28 }}><h3 style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, marginBottom: 10, color: "#F9FAFB" }}>B.Sc. Program</h3><p style={{ color: "#9CA3AF", lineHeight: 1.7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>B.Sc. in Computer Science and Engineering, Varendra University, Rajshahi. 2021 — Present.</p></Glass></Reveal>
-            <Reveal delay={160}><Glass style={{ padding: 28 }}><h3 style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, marginBottom: 10, color: "#F9FAFB" }}>CGPA</h3><p style={{ color: "#9CA3AF", lineHeight: 1.7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>CGPA: [4.00]/4.00</p></Glass></Reveal>
-            <Reveal delay={240}><Glass style={{ padding: 28 }}><h3 style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, marginBottom: 10, color: "#F9FAFB" }}>University Information</h3><p style={{ color: "#9CA3AF", lineHeight: 1.7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>Department of CSE, Varendra University, Rajshahi, Bangladesh.</p></Glass></Reveal>
+          <div className="cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 24, marginBottom: 32 }}>
+            <Reveal delay={0}><Glass style={{ padding: 28 }}><h3 style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, marginBottom: 10, color: "#F9FAFB" }}>Academic Summary</h3><p className="academic-copy" style={{ color: "#9CA3AF", lineHeight: 1.7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>Third-year undergraduate student in Computer Science and Engineering at Varendra University with a strong research focus on AI, ML, CV, NLP, and applied intelligent systems.</p></Glass></Reveal>
+            <Reveal delay={80}><Glass style={{ padding: 28 }}><h3 style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, marginBottom: 10, color: "#F9FAFB" }}>B.Sc. Program</h3><p className="academic-copy" style={{ color: "#9CA3AF", lineHeight: 1.7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>B.Sc. in Computer Science and Engineering, Varendra University, Rajshahi. 2021 — Present.</p></Glass></Reveal>
+            <Reveal delay={160}><Glass style={{ padding: 28 }}><h3 style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, marginBottom: 10, color: "#F9FAFB" }}>CGPA</h3><p className="academic-copy" style={{ color: "#9CA3AF", lineHeight: 1.7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>CGPA: [4.00]/4.00</p></Glass></Reveal>
+            <Reveal delay={240}><Glass style={{ padding: 28 }}><h3 style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, marginBottom: 10, color: "#F9FAFB" }}>University Information</h3><p className="academic-copy" style={{ color: "#9CA3AF", lineHeight: 1.7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>Department of CSE, Varendra University, Rajshahi, Bangladesh.</p></Glass></Reveal>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: 24, marginBottom: 32 }}>
+          <div className="cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: 24, marginBottom: 32 }}>
             <Reveal><Glass style={{ padding: 30 }}><h3 style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, marginBottom: 16, color: "#F9FAFB" }}>Relevant Coursework</h3><div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>{COURSEWORK.map((item) => <span key={item} style={{ padding: "6px 14px", borderRadius: 8, background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", color: "#9CA3AF", fontFamily: "'Space Mono',monospace", fontSize: 11 }}>{item}</span>)}</div></Glass></Reveal>
             <Reveal delay={80}><Glass style={{ padding: 30 }}><h3 style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, marginBottom: 16, color: "#F9FAFB" }}>Certifications</h3><ul style={{ paddingLeft: 18, color: "#9CA3AF", lineHeight: 1.8, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{CERTIFICATIONS.map((item) => <li key={item}>{item}</li>)}</ul></Glass></Reveal>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: 24, marginBottom: 32 }}>
+          <div className="cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: 24, marginBottom: 32 }}>
             <Reveal><Glass style={{ padding: 30 }}><h3 style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, marginBottom: 16, color: "#F9FAFB" }}>Awards and Achievements</h3><ul style={{ paddingLeft: 18, color: "#9CA3AF", lineHeight: 1.8, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{AWARDS.map((item) => <li key={item}>{item}</li>)}</ul></Glass></Reveal>
             <Reveal delay={80}><Glass style={{ padding: 30 }}><h3 style={{ fontFamily: "'Syne',sans-serif", fontSize: 18, marginBottom: 16, color: "#F9FAFB" }}>Research Activities</h3><ul style={{ paddingLeft: 18, color: "#9CA3AF", lineHeight: 1.8, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{RESEARCH_ACTIVITIES.map((item) => <li key={item}>{item}</li>)}</ul></Glass></Reveal>
           </div>

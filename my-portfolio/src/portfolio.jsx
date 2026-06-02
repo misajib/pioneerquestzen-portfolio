@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import emailjs from "@emailjs/browser";
+import ThemeToggleButton from "./ThemeToggleButton";
 
 import {
   FaGithub,
@@ -72,6 +73,7 @@ const PROJECTS = [
     color: "#3B82F6",
     featured: true,
     emoji: "🛒",
+    repoUrl: "https://github.com/misajib",
   },
   {
     title: "Graphical Visualization and Implementation of Line Drawing & 2D Transformations with an Interactive 3D Rubik's Cube using OpenGL",
@@ -80,6 +82,7 @@ const PROJECTS = [
     color: "#8B5CF6",
     featured: true,
     emoji: "🧊",
+    repoUrl: "https://github.com/misajib/Computer-Graphics-RubiksCube-OpenGL",
   },
   {
     title: "SmartPark: IoT-Based Smart Parking Management System",
@@ -88,6 +91,7 @@ const PROJECTS = [
     color: "#22D3EE",
     featured: false,
     emoji: "📱",
+    repoUrl: "https://github.com/misajib",
   },
 ];
 
@@ -168,6 +172,14 @@ const getPaperHref = (r) => {
   // avoid accidentally using Google Scholar or profile links
   if (r.link && !/scholar|google\.com/i.test(r.link)) return r.link;
   return null;
+};
+
+const getProjectRepoMeta = (project) => {
+  const repoUrl = project?.repoUrl || project?.githubUrl || project?.repo || null;
+
+  if (!repoUrl) return null;
+
+  return { label: "GitHub", href: repoUrl };
 };
 
 const ACHIEVEMENTS = [
@@ -303,8 +315,8 @@ function SkillBar({ name, level, color = "#3B82F6" }) {
   return (
     <div ref={ref} className="mb-4">
       <div className="flex justify-between mb-1">
-        <span style={{ color: "#F9FAFB", fontSize: 13, fontFamily: "'Space Mono', monospace" }}>{name}</span>
-        <span style={{ color: "#9CA3AF", fontSize: 12, fontFamily: "'Space Mono', monospace" }}>{level}%</span>
+        <span className="skill-label" style={{ color: "#F9FAFB", fontSize: 13, fontFamily: "'Space Mono', monospace" }}>{name}</span>
+        <span className="skill-percent" style={{ color: "#9CA3AF", fontSize: 12, fontFamily: "'Space Mono', monospace" }}>{level}%</span>
       </div>
       <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 99, height: 6, overflow: "hidden" }}>
         <div style={{
@@ -368,7 +380,7 @@ function Particles() {
     window.addEventListener("resize", resize);
     return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
   }, []);
-  return <canvas ref={canvasRef} style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }} />;
+  return <canvas ref={canvasRef} className="particles-layer" style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }} />;
 }
 
 // ─── Mouse Glow ───────────────────────────────────────────────────────────────
@@ -385,7 +397,7 @@ function MouseGlow() {
     return () => window.removeEventListener("mousemove", move);
   }, []);
   return (
-    <div ref={ref} style={{
+    <div ref={ref} className="mouse-glow" style={{
       position: "fixed", pointerEvents: "none", zIndex: 1,
       width: 500, height: 500, borderRadius: "50%",
       background: "radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 70%)",
@@ -417,13 +429,13 @@ function Cursor() {
   }, []);
   return (
     <>
-      <div ref={dot} style={{
+      <div ref={dot} className="cursor-layer" style={{
         position: "fixed", pointerEvents: "none", zIndex: 9999,
         width: 8, height: 8, borderRadius: "50%",
         background: "#22D3EE", transform: "translate(-50%,-50%)",
         boxShadow: "0 0 12px #22D3EE",
       }} />
-      <div ref={ring} style={{
+      <div ref={ring} className="cursor-layer" style={{
         position: "fixed", pointerEvents: "none", zIndex: 9998,
         width: 32, height: 32, borderRadius: "50%",
         border: "1.5px solid rgba(59,130,246,0.6)",
@@ -449,7 +461,7 @@ function LoadingScreen({ onDone }) {
   return (
     <div style={{
       position: "fixed", inset: 0, zIndex: 9999,
-      background: "#0B0F19", display: "flex", flexDirection: "column",
+      background: "var(--page-bg)", display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "center", gap: 32,
     }}>
       <div style={{ position: "relative", width: 80, height: 80 }}>
@@ -563,15 +575,15 @@ function Glass({ children, style = {}, className = "", hover = true }) {
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className={className}
+      className={`glass-panel ${className}`.trim()}
       style={{
-        background: "rgba(255,255,255,0.03)",
+        background: "var(--surface)",
         backdropFilter: "blur(20px)",
-        border: `1px solid ${hovered && hover ? "rgba(59,130,246,0.5)" : "rgba(255,255,255,0.07)"}`,
+        border: `1px solid ${hovered && hover ? "rgba(59,130,246,0.5)" : "var(--border)"}`,
         borderRadius: 20,
         transition: "all 0.3s ease",
         transform: hovered && hover ? "translateY(-4px)" : "none",
-        boxShadow: hovered && hover ? "0 20px 60px rgba(59,130,246,0.15)" : "0 4px 24px rgba(0,0,0,0.3)",
+        boxShadow: hovered && hover ? "0 20px 60px rgba(59,130,246,0.15)" : "var(--shadow)",
         ...style,
       }}
     >
@@ -597,7 +609,7 @@ function SectionTitle({ tag, title, sub }) {
         fontFamily: "'Syne', sans-serif", fontSize: "clamp(28px, 5vw, 48px)",
         fontWeight: 800, color: "#F9FAFB", lineHeight: 1.1, marginBottom: 16,
       }}>{title}</h2>
-      {sub && <p style={{ color: "#9CA3AF", fontSize: 16, maxWidth: 480, margin: "0 auto" }}>{sub}</p>}
+      {sub && <p className="academic-copy" style={{ color: "#9CA3AF", fontSize: 16, maxWidth: 480, margin: "0 auto" }}>{sub}</p>}
     </div>
   );
 }
@@ -753,14 +765,8 @@ export default function Portfolio() {
   if (!loaded) return <LoadingScreen onDone={() => setLoaded(true)} />;
 
   return (
-    <div style={{ background: "#0B0F19", minHeight: "100vh", color: "#F9FAFB", overflowX: "hidden" }}>
+    <div className="theme-scope" style={{ background: "var(--page-bg)", minHeight: "100vh", color: "var(--text-primary)", overflowX: "hidden" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
-        html { scroll-behavior: smooth; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #0B0F19; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(#3B82F6,#8B5CF6); border-radius: 99px; }
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-18px)} }
         @keyframes gradient-shift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
@@ -773,7 +779,6 @@ export default function Portfolio() {
         .nav-link { position:relative; }
         .nav-link::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:1px; background:linear-gradient(90deg,#3B82F6,#22D3EE); transform:scaleX(0); transition:transform 0.3s ease; }
         .nav-link:hover::after, .nav-link.active::after { transform:scaleX(1); }
-        section { position: relative; z-index: 2; }
       `}</style>
 
       <Particles />
@@ -784,33 +789,37 @@ export default function Portfolio() {
       {/* ── NAV ── */}
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        background: "rgba(11,15,25,0.85)", backdropFilter: "blur(24px)",
+        background: "var(--nav-bg)", backdropFilter: "blur(24px)",
         borderBottom: "1px solid rgba(255,255,255,0.05)",
         padding: "0 5vw",
       }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", height: 68, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div onClick={() => scrollTo("hero")} style={{
+          <button type="button" onClick={() => scrollTo("hero")} aria-label="Back to home hero section" style={{
+            background: "none",
+            border: "none",
+            padding: 0,
             fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 20,
             background: "linear-gradient(135deg, #3B82F6, #22D3EE)",
             WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
             letterSpacing: 1, cursor: "none",
           }}>
             Pioneer QuestZen
-          </div>
+          </button>
 
           {/* Desktop nav */}
-          <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 32, alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
             {NAV_LINKS.map(l => (
               <button key={l} onClick={() => scrollTo(l.toLowerCase())}
                 className={`nav-link${activeSection === l.toLowerCase() ? " active" : ""}`}
                 style={{
-                  background: "none", border: "none", color: activeSection === l.toLowerCase() ? "#3B82F6" : "#9CA3AF",
+                  background: "none", border: "none", color: activeSection === l.toLowerCase() ? "#3B82F6" : "var(--text-secondary)",
                   fontFamily: "'Space Mono', monospace", fontSize: 12, letterSpacing: 1,
                   textTransform: "uppercase", transition: "color 0.2s", cursor: "none",
                 }}>
                 {l}
               </button>
             ))}
+            <ThemeToggleButton compact />
             <button
               onClick={() => scrollTo("contact")}
               style={{
@@ -841,9 +850,9 @@ export default function Portfolio() {
           zIndex: 0, animationDelay: "4s",
         }} />
 
-        <div style={{ maxWidth: 1200, margin: "0 auto", width: "100%", display: "flex", alignItems: "center", gap: 80, flexWrap: "wrap", position: "relative", zIndex: 2 }}>
+        <div className="hero-layout" style={{ maxWidth: 1200, margin: "0 auto", width: "100%", display: "flex", alignItems: "center", gap: 80, flexWrap: "wrap", position: "relative", zIndex: 2 }}>
           {/* Left */}
-          <div style={{ flex: 1, minWidth: 300 }}>
+          <div className="hero-copy" style={{ flex: 1, minWidth: 300 }}>
             <div style={{
               display: "inline-flex", alignItems: "center", gap: 8,
               padding: "6px 16px", borderRadius: 99,
@@ -874,7 +883,7 @@ export default function Portfolio() {
               <Typing texts={["AI/ML Researcher", "Computer Vision Enthusiast", "NLP & LLM Explorer", "Undergraduate Researcher", "Competitive Programmer"]} />
             </div>
 
-            <p style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, lineHeight: 1.8, maxWidth: 520, marginBottom: 40 }}>
+            <p className="academic-copy" style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, lineHeight: 1.8, maxWidth: 520, marginBottom: 40 }}>
               I’m a third-year Computer Science and Engineering student at Varendra University, exploring AI, machine learning, computer vision, NLP, and applied research to create meaningful human-centered solutions.
             </p>
 
@@ -918,6 +927,7 @@ export default function Portfolio() {
               <a
                 href={getPublicAssetUrl("sajib_cv.pdf")}
                 download
+                className="hero-download-btn"
                 style={{
                   padding: "14px 32px",
                   borderRadius: 99,
@@ -1125,7 +1135,7 @@ export default function Portfolio() {
           </div>
 
           {/* Right — avatar */}
-          <div className="float" style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: "0 0 auto" }}>
+          <div className="float hero-avatar" style={{ display: "flex", alignItems: "center", justifyContent: "center", flex: "0 0 auto" }}>
             <div style={{ position: "relative", width: 280, height: 280 }}>
               {/* Pulse rings */}
               {[1, 2].map(i => (
@@ -1218,7 +1228,7 @@ export default function Portfolio() {
           <Reveal>
             <SectionTitle tag="01 — About" title="Who Am I?" sub="Third-year CSE student at Varendra University exploring AI, research, and applied intelligent systems." />
           </Reveal>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 24 }}>
+          <div className="cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 24 }}>
             {[
               { icon: "🎓", title: "Education", content: "B.Sc. in Computer Science and Engineering at Varendra University, Rajshahi, currently in the 3rd year, 6th semester, with CGPA [4.00]/4.00.", href: "/education" },
               { icon: "🔬", title: "Research Focus", content: "Artificial intelligence, machine learning, computer vision, natural language processing, large language models, retrieval-augmented generation, explainable AI, and healthcare AI." },
@@ -1231,14 +1241,14 @@ export default function Portfolio() {
                     <Glass style={{ padding: 32, height: "100%" }}>
                       <div style={{ fontSize: 36, marginBottom: 16 }}>{c.icon}</div>
                       <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 18, color: "#F9FAFB", marginBottom: 12 }}>{c.title}</h3>
-                      <p style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14, lineHeight: 1.7 }}>{c.content}</p>
+                      <p className="academic-copy" style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14, lineHeight: 1.7 }}>{c.content}</p>
                     </Glass>
                   </Link>
                 ) : (
                   <Glass style={{ padding: 32, height: "100%" }}>
                     <div style={{ fontSize: 36, marginBottom: 16 }}>{c.icon}</div>
                     <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 18, color: "#F9FAFB", marginBottom: 12 }}>{c.title}</h3>
-                    <p style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14, lineHeight: 1.7 }}>{c.content}</p>
+                    <p className="academic-copy" style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14, lineHeight: 1.7 }}>{c.content}</p>
                   </Glass>
                 )}
               </Reveal>
@@ -1248,7 +1258,7 @@ export default function Portfolio() {
       </section>
 
       {/* ── SKILLS ── */}
-      <section id="skills" style={{ padding: "120px 5vw", background: "rgba(17,24,39,0.4)" }}>
+      <section id="skills" style={{ padding: "120px 5vw", background: "var(--section-bg)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Reveal>
             <SectionTitle tag="02 — Skills" title="Tech Stack" sub="Programming, AI/ML, web development, tools, and competitive programming areas reflected in the CV." />
@@ -1256,7 +1266,7 @@ export default function Portfolio() {
           {/* Category tabs */}
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginBottom: 48 }}>
             {Object.keys(SKILLS).map(cat => (
-              <button key={cat} onClick={() => setActiveSkill(cat)} style={{
+              <button key={cat} className="skill-tab" onClick={() => setActiveSkill(cat)} style={{
                 padding: "10px 22px", borderRadius: 99,
                 background: activeSkill === cat ? "linear-gradient(135deg,#3B82F6,#8B5CF6)" : "rgba(255,255,255,0.04)",
                 border: `1px solid ${activeSkill === cat ? "transparent" : "rgba(255,255,255,0.08)"}`,
@@ -1269,7 +1279,7 @@ export default function Portfolio() {
               </button>
             ))}
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(360px,1fr))", gap: 32 }}>
+          <div className="skills-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(360px,1fr))", gap: 32 }}>
             <Reveal>
               <Glass style={{ padding: 32 }}>
                 <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, marginBottom: 28, color: "#F9FAFB", fontSize: 18, display: "flex", alignItems: "center", gap: 10 }}>
@@ -1287,7 +1297,7 @@ export default function Portfolio() {
                 <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, marginBottom: 12, color: "#F9FAFB", fontSize: 18 }}>Core Technologies</h3>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
                   {["Python", "C++", "Java", "JavaScript", "SQL", "PyTorch", "TensorFlow", "Scikit-learn", "Transformers", "LangChain", "RAG", "LLMs", "React.js", "Django", "Firebase", "Git"].map(t => (
-                    <span key={t} style={{
+                    <span key={t} className="skill-chip" style={{
                       padding: "6px 14px", borderRadius: 8,
                       background: "rgba(59,130,246,0.08)",
                       border: "1px solid rgba(59,130,246,0.2)",
@@ -1312,7 +1322,7 @@ export default function Portfolio() {
           <Reveal>
             <SectionTitle tag="03 — Work" title="Projects" sub="Projects, labs, and applied systems built from the CV and academic work." />
           </Reveal>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(340px,1fr))", gap: 28 }}>
+          <div className="project-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(340px,1fr))", gap: 28 }}>
             {PROJECTS.map((p, i) => (
               <Reveal key={p.title} delay={i * 80}>
                 <div style={{
@@ -1341,7 +1351,7 @@ export default function Portfolio() {
                   )}
                   <div style={{ fontSize: 40, marginBottom: 16 }}>{p.emoji}</div>
                   <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 20, color: "#F9FAFB", marginBottom: 10 }}>{p.title}</h3>
-                  <p style={{ color: "#9CA3AF", fontSize: 13, lineHeight: 1.7, marginBottom: 20, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{p.desc}</p>
+                  <p className="academic-copy" style={{ color: "#9CA3AF", fontSize: 13, lineHeight: 1.7, marginBottom: 20, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{p.desc}</p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 24 }}>
                     {p.tags.map(t => (
                       <span key={t} style={{
@@ -1352,20 +1362,77 @@ export default function Portfolio() {
                     ))}
                   </div>
                   <div style={{ display: "flex", gap: 12 }}>
-                    {["Live Demo", "GitHub"].map(btn => (
-                      <button key={btn} style={{
-                        flex: 1, padding: "9px 0", borderRadius: 10,
-                        background: btn === "Live Demo" ? `${p.color}18` : "rgba(255,255,255,0.04)",
-                        border: `1px solid ${btn === "Live Demo" ? `${p.color}40` : "rgba(255,255,255,0.08)"}`,
-                        color: btn === "Live Demo" ? p.color : "#9CA3AF",
-                        fontFamily: "'Space Mono',monospace", fontSize: 10, letterSpacing: 1,
-                        transition: "all 0.2s", cursor: "none",
-                      }}
-                        onMouseEnter={e => { e.target.style.opacity = "0.75"; }}
-                        onMouseLeave={e => { e.target.style.opacity = "1"; }}>
-                        {btn} {btn === "Live Demo" ? "↗" : "→"}
-                      </button>
-                    ))}
+                    {(() => {
+                      const repoMeta = getProjectRepoMeta(p);
+                      const buttons = [
+                        {
+                          label: "Live Demo",
+                          href: null,
+                          disabled: true,
+                          tone: p.color,
+                          suffix: "↗",
+                        },
+                        ...(repoMeta ? [{
+                          label: repoMeta.label,
+                          href: repoMeta.href,
+                          disabled: false,
+                          tone: p.color,
+                          suffix: "↗",
+                        }] : []),
+                      ];
+
+                      return buttons.map((btn) => {
+                        const sharedButtonStyle = {
+                          flex: 1,
+                          padding: "9px 0",
+                          borderRadius: 10,
+                          background: btn.label === "Live Demo" ? `${p.color}18` : "rgba(255,255,255,0.04)",
+                          border: `1px solid ${btn.label === "Live Demo" ? `${p.color}40` : "rgba(255,255,255,0.08)"}`,
+                          color: btn.tone,
+                          fontFamily: "'Space Mono',monospace",
+                          fontSize: 10,
+                          letterSpacing: 1,
+                          transition: "all 0.2s",
+                          cursor: btn.disabled ? "not-allowed" : "none",
+                          textDecoration: "none",
+                          opacity: btn.disabled && btn.label === "Live Demo" ? 0.7 : 1,
+                        };
+
+                        const content = `${btn.label}${btn.suffix ? ` ${btn.suffix}` : ""}`;
+
+                        if (btn.href) {
+                          return (
+                            <a
+                              key={btn.label}
+                              href={btn.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={sharedButtonStyle}
+                              onMouseEnter={e => { e.currentTarget.style.opacity = "0.75"; }}
+                              onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}
+                            >
+                              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                                <FaGithub size={11} />
+                                {content}
+                              </span>
+                            </a>
+                          );
+                        }
+
+                        return (
+                          <button
+                            key={btn.label}
+                            type="button"
+                            disabled={btn.disabled}
+                            style={sharedButtonStyle}
+                            onMouseEnter={e => { if (!btn.disabled) e.currentTarget.style.opacity = "0.75"; }}
+                            onMouseLeave={e => { if (!btn.disabled) e.currentTarget.style.opacity = "1"; }}
+                          >
+                            {content}
+                          </button>
+                        );
+                      });
+                    })()}
                   </div>
                 </div>
               </Reveal>
@@ -1375,7 +1442,7 @@ export default function Portfolio() {
       </section>
 
       {/* ── RESEARCH ── */}
-      <section id="research" style={{ padding: "120px 5vw", background: "rgba(17,24,39,0.4)" }}>
+      <section id="research" style={{ padding: "120px 5vw", background: "var(--section-bg)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Reveal>
             <SectionTitle tag="04 — Academia" title="Research & Publications" sub="Conference publications and applied research in AI, computer vision, and intelligent systems." />
@@ -1389,7 +1456,7 @@ export default function Portfolio() {
             <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
               {RESEARCH.map((r, i) => (
                 <Reveal key={r.title} delay={i * 120}>
-                  <div style={{ display: "flex", gap: 24, paddingLeft: 84, position: "relative", alignItems: "flex-start" }}>
+                  <div className="research-item" style={{ display: "flex", gap: 24, paddingLeft: 84, position: "relative", alignItems: "flex-start" }}>
                     <div style={{
                       position: "absolute", left: 28, top: 20, width: 14, height: 14,
                       borderRadius: "50%", background: "linear-gradient(135deg,#3B82F6,#8B5CF6)",
@@ -1417,7 +1484,7 @@ export default function Portfolio() {
                         </div>
                       </div>
 
-                      <p style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14, lineHeight: 1.7, margin: "6px 0 16px 0" }}>{r.abstract}</p>
+                      <p className="academic-copy" style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 14, lineHeight: 1.7, margin: "6px 0 16px 0" }}>{r.abstract}</p>
 
                       <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 8 }}>
                         {(() => {
@@ -1464,7 +1531,7 @@ export default function Portfolio() {
           <Reveal>
             <SectionTitle tag="05 — Honors" title="Certifications & Recognition" sub="Conference presentations, certificates, and professional training from the CV." />
           </Reveal>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 20 }}>
+          <div className="cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 20 }}>
             {ACHIEVEMENTS.map((a, i) => (
               <Reveal key={`${a.title}-${i}`} delay={i * 80}>
                 <Glass style={{ padding: 24, display: "flex", gap: 18, alignItems: "flex-start" }}>
@@ -1489,7 +1556,7 @@ export default function Portfolio() {
           <Reveal>
             <SectionTitle tag="— Leadership" title="Leadership & Activities" sub="Selected leadership roles, community participation, and event experience." />
           </Reveal>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 20 }}>
+          <div className="cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 20 }}>
             {LEADERSHIP.map((l, i) => (
               <Reveal key={l.title} delay={i * 80}>
                 <div style={{
@@ -1501,7 +1568,7 @@ export default function Portfolio() {
                   onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}>
                   <div style={{ fontSize: 40, marginBottom: 16 }}>{l.icon}</div>
                   <h3 style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 18, color: "#F9FAFB", marginBottom: 10 }}>{l.title}</h3>
-                  <p style={{ color: "#9CA3AF", fontSize: 13, lineHeight: 1.7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{l.desc}</p>
+                  <p className="academic-copy" style={{ color: "#9CA3AF", fontSize: 13, lineHeight: 1.7, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>{l.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -1510,17 +1577,20 @@ export default function Portfolio() {
       </section>
 
       {/* ── LANGUAGES ── */}
-      <section id="languages" style={{ padding: "80px 5vw", background: "rgba(17,24,39,0.04)" }}>
+      <section id="languages" className="languages-section" style={{ padding: "80px 5vw", background: "rgba(17,24,39,0.04)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Reveal>
             <SectionTitle tag="— Languages" title="Languages" sub="" />
           </Reveal>
           <Reveal delay={100}>
-            <Glass style={{ padding: 20, display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <Glass className="language-panel" style={{ padding: 20, display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 14 }}>
               {LANGUAGES.map(l => (
-                <div key={l.name} style={{ padding: "8px 14px", borderRadius: 12, background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.12)", color: "#F9FAFB", fontFamily: "'Space Mono',monospace", fontSize: 13 }}>
-                  <div style={{ fontWeight: 700 }}>{l.name}</div>
-                  <div style={{ fontSize: 12, color: "#9CA3AF" }}>{l.level}</div>
+                <div key={l.name} className="language-card language-pill" style={{ padding: "18px 18px", borderRadius: 18, background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.12)", color: "#F9FAFB", fontFamily: "'Space Mono',monospace", fontSize: 13, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
+                    <div className="language-title" style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: 18, letterSpacing: 0.2 }}>{l.name}</div>
+                    <div className="language-subtitle" style={{ fontFamily: "'Plus Jakarta Sans',sans-serif", fontSize: 13, color: "#9CA3AF" }}>{l.name === "Bengali" ? "Native speaker" : "Professional communication"}</div>
+                  </div>
+                  <span className="language-badge" style={{ padding: "7px 10px", borderRadius: 999, fontSize: 10, letterSpacing: 1, textTransform: "uppercase", background: "rgba(59,130,246,0.12)", border: "1px solid rgba(59,130,246,0.18)", color: "#3B82F6", whiteSpace: "nowrap" }}>{l.level}</span>
                 </div>
               ))}
             </Glass>
@@ -1529,18 +1599,18 @@ export default function Portfolio() {
       </section>
 
       {/* ── PERSONAL INTERESTS ── */}
-      <section id="interests" style={{ padding: "120px 5vw" }}>
+      <section id="interests" className="beyond-tech-section" style={{ padding: "120px 5vw" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Reveal>
             <SectionTitle tag="— Beyond Technology" title="Beyond Technology" sub="Personal interests that shape my research curiosity and collaboration style." />
           </Reveal>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: 18, marginTop: 20 }}>
+          <div className="interest-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: 18, marginTop: 20, alignItems: "stretch" }}>
             {INTERESTS.map((it, i) => (
               <Reveal key={`${it}-${i}`} delay={i * 50}>
-                <Glass style={{ padding: 20, textAlign: "center", transition: "transform 0.25s, box-shadow 0.25s", cursor: "none" }}
+                <Glass className="beyond-tech-card" style={{ padding: 20, textAlign: "center", transition: "transform 0.25s, box-shadow 0.25s", cursor: "none", minHeight: 72 }}
                   onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-6px)"; e.currentTarget.style.boxShadow = "0 18px 40px rgba(59,130,246,0.08)"; }}
                   onMouseLeave={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "none"; }}>
-                  <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 14, color: "#F9FAFB", marginBottom: 8 }}>{it}</div>
+                  <div className="interest-title" style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 14, color: "#F9FAFB", marginBottom: 8 }}>{it}</div>
                 </Glass>
               </Reveal>
             ))}
@@ -1549,7 +1619,7 @@ export default function Portfolio() {
       </section>
 
       {/* ── CONTACT ── */}
-      <section id="contact" style={{ padding: "120px 5vw", background: "rgba(17,24,39,0.4)" }}>
+      <section id="contact" style={{ padding: "120px 5vw", background: "var(--section-bg)" }}>
         <div style={{ maxWidth: 800, margin: "0 auto" }}>
           <Reveal>
             <div style={{ textAlign: "center", marginBottom: 24 }}>
@@ -1568,9 +1638,10 @@ export default function Portfolio() {
                 background: "linear-gradient(90deg,#3B82F6,#8B5CF6)", WebkitBackgroundClip: "text", color: "transparent",
                 backgroundSize: "200% 100%", animation: "gradient-shift 3s linear infinite",
               }}>Let's Build Together 🤝</h2>
-              <p style={{ color: "#9CA3AF", fontSize: 16, maxWidth: 640, margin: "0 auto" }}>Open to research collaborations, project work, academic opportunities, and professional connections.</p>
+              <p className="academic-copy" style={{ color: "#9CA3AF", fontSize: 16, maxWidth: 640, margin: "0 auto" }}>Open to research collaborations, project work, academic opportunities, and professional connections.</p>
               <div style={{ marginTop: 16 }}>
                 <a href={"https://mail.google.com/mail/?view=cm&fs=1&to=232311314@vu.edu.bd,misajib0493@gmail.com&subject=" + encodeURIComponent("Research Collaboration") + "&body=" + encodeURIComponent("Hi Md Mohaiminul Islam Sajib,%0A%0AI'd like to discuss a research collaboration.\n\nRegards,%0A[Your Name]")}
+                  className="research-chat-btn"
                   style={{
                     display: "inline-block", padding: "10px 22px", borderRadius: 99, border: "1px solid rgba(255,255,255,0.06)",
                     background: "linear-gradient(90deg, rgba(59,130,246,0.08), rgba(139,92,246,0.08))", color: "#F9FAFB",
@@ -1622,7 +1693,7 @@ export default function Portfolio() {
                   </div>
                 )}
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+                <div className="contact-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
                   {[
                     { label: "Your Name", key: "name", type: "text", placeholder: "Your name" },
                     { label: "Email Address", key: "email", type: "email", placeholder: "232311314@vu.edu.bd" },
@@ -1700,7 +1771,7 @@ export default function Portfolio() {
         display: "flex", alignItems: "center", justifyContent: "space-between",
         flexWrap: "wrap", gap: 16, position: "relative", zIndex: 2,
       }}>
-        <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 16, background: "linear-gradient(135deg,#3B82F6,#22D3EE)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Pioneer QuestZen</div>
+        <button type="button" onClick={() => scrollTo("hero")} aria-label="Back to home hero section" style={{ background: "none", border: "none", padding: 0, fontFamily: "'Syne',sans-serif", fontWeight: 700, fontSize: 16, background: "linear-gradient(135deg,#3B82F6,#22D3EE)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", cursor: "none" }}>Pioneer QuestZen</button>
         <div style={{ fontFamily: "'Space Mono',monospace", fontSize: 11, color: "#4B5563", display: 'flex', flexDirection: 'column', gap: 6 }}>
           <div>© {new Date().getFullYear()} Muhammad Mohaiminul Islam Sajib · Crafted with precision</div>
           <a href="https://mail.google.com/mail/?view=cm&fs=1&to=232311314@vu.edu.bd,misajib0493@gmail.com" style={{ color: "#9CA3AF", textDecoration: "none", fontFamily: "'Space Mono',monospace", fontSize: 11 }} onMouseEnter={e => e.currentTarget.style.color = '#3B82F6'} onMouseLeave={e => e.currentTarget.style.color = '#9CA3AF'}>232311314@vu.edu.bd</a>
