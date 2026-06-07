@@ -103,7 +103,8 @@ const RESEARCH = [
     authors: [AUTHOR_NAME, "Protik Chakroborty"],
     abstract: "Explainable cardiovascular risk prediction work using hybrid learning with mRMR-PCA feature optimization.",
     status: "Published",
-    localPdf: "xai.pdf",
+    // localPdf: "xai.pdf",
+    link: "https://www.researchgate.net/publication/406274502_Explainable_Hybrid_Learning_for_Cardiovascular_Risk_Prediction_with_mRMR-PCA_Feature_Optimization",
   },
 
   {
@@ -113,7 +114,8 @@ const RESEARCH = [
     authors: ["Mst. Homai Ara Yesmin", "Md. Nahid Hasan", AUTHOR_NAME, "Md. Yousuf Ali", "Sohanur Rahman", "Protik Chakroborty"],
     abstract: "Deep learning-based license plate recognition system developed for practical computer vision use.",
     status: "Published",
-    localPdf: "Numberplate.pdf",
+    // localPdf: "Numberplate.pdf",
+    link: "https://www.researchgate.net/publication/404337438_License_Plate_Recognition_System_Using_Deep_Learning_Approach",
   },
   {
     year: "2026",
@@ -123,6 +125,7 @@ const RESEARCH = [
     abstract: "Monkeypox classification work using diffusion-based augmentation and DenseNet121.",
     status: "Published",
     localPdf: "monkeypox.pdf",
+    link: "https://www.researchgate.net/publication/406281432_DiffusionDxNet_Improving_Monkeypox_Classification_Using_Diffusion-Based_Data_Augmentation_and_DenseNet121",
   },
   {
     year: "2025",
@@ -131,7 +134,8 @@ const RESEARCH = [
     authors: ["Protik Chakroborty", "Pallab Chowdhury", "Pritom Chakroborty", "Arun Kumar Sikder", AUTHOR_NAME],
     abstract: "Fusion-based deep learning framework for robust lung and colon cancer classification from histopathological images.",
     status: "Published",
-    localPdf: "BIM.pdf",
+    // localPdf: "BIM.pdf",
+    link: "https://www.researchgate.net/publication/406274493_FusionDxNetA_Fusion-BasedApproachfor_RobustLungColon_CancerClassificationUsing_Histopathological_Images",
   },
   {
     year: "2025",
