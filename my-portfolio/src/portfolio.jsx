@@ -67,13 +67,47 @@ const SKILLS = {
 
 const PROJECTS = [
   {
+    title: "Mini OS Simulator",
+    desc: "A desktop-based operating system simulator developed in Python and Tkinter that visualizes CPU scheduling, memory management, page replacement, process synchronization, deadlock handling, and file allocation algorithms through interactive simulations, real-time statistics, and graphical visualizations.",
+    tags: [
+      "Python",
+      "Tkinter",
+      "Operating Systems",
+      "OOP",
+      "MVC",
+      "Algorithms"
+    ],
+    color: "#10B981",
+    featured: true,
+    emoji: "💻",
+    repoUrl: "https://github.com/misajib/Mini-OS-Simulator",
+    liveUrl: "https://misajib.github.io/Mini-OS-Simulator/"
+  },
+  {
+    title: "Pioneer QuestZen: Personal Portfolio & Research Showcase",
+    desc: "A modern portfolio website built with React and Vite to showcase my research publications, AI projects, technical skills, achievements, and professional experience through an interactive and responsive interface.",
+    tags: [
+      "React",
+      "Vite",
+      "JavaScript",
+      "CSS",
+      "GitHub Pages"
+    ],
+    color: "#F59E0B",
+    featured: true,
+    emoji: "🚀",
+    repoUrl: "https://github.com/misajib/pioneerquestzen-portfolio",
+    liveUrl: "https://misajib.github.io/pioneerquestzen-portfolio/"
+  },
+  {
     title: "Cook2Cart: An AI-Driven Secure Recipe-to-Cart Grocery E-Commerce Platform with Smart Recommendation",
     desc: "An AI-driven recipe-to-cart grocery e-commerce platform that extracts ingredients from recipes, maps them to available products, and supports intelligent product recommendations.",
     tags: ["Django", "Python", "PostgreSQL", "MongoDB", "GPT", "LLaMA", "Qwen"],
     color: "#3B82F6",
     featured: true,
     emoji: "🛒",
-    repoUrl: "https://github.com/misajib",
+    repoUrl: "https://github.com/gr309/cook2cart",
+    liveUrl: "https://gr309.github.io/cook2cart/"
   },
   {
     title: "Graphical Visualization and Implementation of Line Drawing & 2D Transformations with an Interactive 3D Rubik's Cube using OpenGL",
@@ -196,7 +230,7 @@ const ACHIEVEMENTS = [
 ];
 
 const STATS = [
-  { label: "Projects", value: 3 },
+  { label: "Projects", value: 5 },
   { label: "Publications", value: 5 },
   { label: "Awards", value: 6 },
   { label: "Cups of Coffee", value: 9999 },
@@ -1050,92 +1084,92 @@ export default function Portfolio() {
                 {
                   icon: <MdEmail size={22} />,
                   color: "#EA4335",
-                    url: "https://mail.google.com/mail/?view=cm&fs=1&to=misajib0493@gmail.com",
+                  url: "https://mail.google.com/mail/?view=cm&fs=1&to=misajib0493@gmail.com",
                   name: "Email",
                 },
               ].map((s) => (
-                  s.name === 'Email' ? (
-                    <button
-                      key={s.name}
-                      onClick={(e) => { e.preventDefault(); openEmailPicker(); }}
-                      title={s.name}
-                      style={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 14,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        background: "rgba(255,255,255,0.05)",
-                        border: "1px solid rgba(255,255,255,0.08)",
-                        color: "#9CA3AF",
-                        textDecoration: "none",
-                        transition: "all 0.3s ease",
-                        backdropFilter: "blur(12px)",
-                        cursor: "pointer",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = s.color;
-                        e.currentTarget.style.color = s.color;
-                        e.currentTarget.style.boxShadow = `0 0 20px ${s.color}40`;
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor =
-                          "rgba(255,255,255,0.08)";
-                        e.currentTarget.style.color = "#9CA3AF";
-                        e.currentTarget.style.boxShadow = "none";
-                      }}
-                    >
-                      {s.icon}
-                    </button>
-                  ) : (
-                    <a
-                      key={s.name}
-                      href={s.url}
-                      target={s.url && s.url.startsWith("http") ? "_blank" : undefined}
-                      rel="noopener noreferrer"
-                      title={s.name}
-                      style={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 14,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        background: "rgba(255,255,255,0.05)",
-                        border: "1px solid rgba(255,255,255,0.08)",
-                        color: "#9CA3AF",
-                        textDecoration: "none",
-                        transition: "all 0.3s ease",
-                        backdropFilter: "blur(12px)",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = s.color;
-                        e.currentTarget.style.color = s.color;
-                        e.currentTarget.style.boxShadow = `0 0 20px ${s.color}40`;
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor =
-                          "rgba(255,255,255,0.08)";
-                        e.currentTarget.style.color = "#9CA3AF";
-                        e.currentTarget.style.boxShadow = "none";
-                      }}
-                    >
-                      {s.icon}
-                    </a>
-                  )
+                s.name === 'Email' ? (
+                  <button
+                    key={s.name}
+                    onClick={(e) => { e.preventDefault(); openEmailPicker(); }}
+                    title={s.name}
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 14,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: "rgba(255,255,255,0.05)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      color: "#9CA3AF",
+                      textDecoration: "none",
+                      transition: "all 0.3s ease",
+                      backdropFilter: "blur(12px)",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = s.color;
+                      e.currentTarget.style.color = s.color;
+                      e.currentTarget.style.boxShadow = `0 0 20px ${s.color}40`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor =
+                        "rgba(255,255,255,0.08)";
+                      e.currentTarget.style.color = "#9CA3AF";
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
+                  >
+                    {s.icon}
+                  </button>
+                ) : (
+                  <a
+                    key={s.name}
+                    href={s.url}
+                    target={s.url && s.url.startsWith("http") ? "_blank" : undefined}
+                    rel="noopener noreferrer"
+                    title={s.name}
+                    style={{
+                      width: 48,
+                      height: 48,
+                      borderRadius: 14,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      background: "rgba(255,255,255,0.05)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      color: "#9CA3AF",
+                      textDecoration: "none",
+                      transition: "all 0.3s ease",
+                      backdropFilter: "blur(12px)",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = s.color;
+                      e.currentTarget.style.color = s.color;
+                      e.currentTarget.style.boxShadow = `0 0 20px ${s.color}40`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor =
+                        "rgba(255,255,255,0.08)";
+                      e.currentTarget.style.color = "#9CA3AF";
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
+                  >
+                    {s.icon}
+                  </a>
+                )
               ))}
             </div>
-              {showEmailPicker && (
-                <EmailPicker
-                  emails={["232311314@vu.edu.bd", "misajib0493@gmail.com"]}
-                  previewEmail={previewEmail}
-                  onSelect={handleSelectEmail}
-                  onSave={handleSaveEmail}
-                  onClose={closeEmailPicker}
-                  savedEmail={savedEmail}
-                />
-              )}
+            {showEmailPicker && (
+              <EmailPicker
+                emails={["232311314@vu.edu.bd", "misajib0493@gmail.com"]}
+                previewEmail={previewEmail}
+                onSelect={handleSelectEmail}
+                onSave={handleSaveEmail}
+                onClose={closeEmailPicker}
+                savedEmail={savedEmail}
+              />
+            )}
           </div>
 
           {/* Right — avatar */}
@@ -1200,7 +1234,7 @@ export default function Portfolio() {
 
         {/* Stats row */}
         <div style={{
-          
+
           position: "absolute", bottom: 0, left: 0, right: 0,
           borderTop: "1px solid rgba(255,255,255,0.05)",
           background: "rgba(11,15,25,0.6)", backdropFilter: "blur(10px)",
@@ -1371,8 +1405,8 @@ export default function Portfolio() {
                       const buttons = [
                         {
                           label: "Live Demo",
-                          href: null,
-                          disabled: true,
+                          href: p.liveUrl || null,
+                          disabled: !p.liveUrl,
                           tone: p.color,
                           suffix: "↗",
                         },
