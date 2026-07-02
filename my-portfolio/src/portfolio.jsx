@@ -1358,7 +1358,7 @@ export default function Portfolio() {
       <section id="projects" style={{ padding: "120px 5vw" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Reveal>
-            <SectionTitle tag="03 — Work" title="Projects" sub="Projects, labs, and applied systems built from the CV and academic work." />
+            <SectionTitle tag="03 — Work" title="Projects" sub="A curated collection of AI, research, and software engineering projects focused on solving real-world challenges." />
           </Reveal>
           <div className="project-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(340px,1fr))", gap: 28 }}>
             {PROJECTS.map((p, i) => (
@@ -1675,7 +1675,7 @@ export default function Portfolio() {
                 fontWeight: 800, lineHeight: 1.1, marginBottom: 12,
                 background: "linear-gradient(90deg,#3B82F6,#8B5CF6)", WebkitBackgroundClip: "text", color: "transparent",
                 backgroundSize: "200% 100%", animation: "gradient-shift 3s linear infinite",
-              }}>Let's Build Together 🤝</h2>
+              }}>🚀 Let's Build the Future Together</h2>
               <p className="academic-copy" style={{ color: "#9CA3AF", fontSize: 16, maxWidth: 640, margin: "0 auto" }}>Open to research collaborations, project work, academic opportunities, and professional connections.</p>
               <div style={{ marginTop: 16 }}>
                 <a href={"https://mail.google.com/mail/?view=cm&fs=1&to=232311314@vu.edu.bd,misajib0493@gmail.com&subject=" + encodeURIComponent("Research Collaboration") + "&body=" + encodeURIComponent("Hi Md Mohaiminul Islam Sajib,%0A%0AI'd like to discuss a research collaboration.\n\nRegards,%0A[Your Name]")}
