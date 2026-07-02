@@ -158,8 +158,8 @@ const RESEARCH = [
     authors: [AUTHOR_NAME, "Protik Chakroborty", "Md. Adnan Sami", "Md. Abdus Sami Shezan", "Bishal Prosad"],
     abstract: "Monkeypox classification work using diffusion-based augmentation and DenseNet121.",
     status: "Published",
-    localPdf: "monkeypox.pdf",
-    link: "https://www.researchgate.net/publication/406281432_DiffusionDxNet_Improving_Monkeypox_Classification_Using_Diffusion-Based_Data_Augmentation_and_DenseNet121",
+    // localPdf: "monkeypox.pdf",
+    link: "https://ieeexplore.ieee.org/abstract/document/11545877",
   },
   {
     year: "2025",
