@@ -119,6 +119,22 @@ const PROJECTS = [
     repoUrl: "https://github.com/misajib/Computer-Graphics-RubiksCube-OpenGL",
   },
   {
+    title: "Scientific Calculator",
+    desc: "A desktop-based Scientific Calculator developed using Java Swing that provides arithmetic, trigonometric, logarithmic, exponential, factorial, and advanced mathematical operations through an intuitive graphical user interface with robust exception handling.",
+    tags: [
+      "Java",
+      "Java Swing",
+      "OOP",
+      "Desktop Application",
+      "NetBeans"
+    ],
+    color: "#EF4444",
+    featured: false,
+    emoji: "🧮",
+    repoUrl: "https://github.com/misajib/Scientific-Calculator-Java",
+    liveUrl: ""
+  },
+  {
     title: "SmartPark: IoT-Based Smart Parking Management System",
     desc: "Built a real-time smart parking solution using NodeMCU and IR sensors for occupancy monitoring with Firebase-based cloud synchronization and Android app support.",
     tags: ["NodeMCU", "Firebase", "Android Studio", "Embedded C"],
