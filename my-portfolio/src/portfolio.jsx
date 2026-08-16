@@ -1070,13 +1070,13 @@ export default function Portfolio() {
                 {
                   icon: <SiOrcid size={22} />,
                   color: "#A6CE39",
-                  url: "YOUR_ORCID_LINK",
+                  url: "https://orcid.org/my-orcid?orcid=0009-0007-6214-3444",
                   name: "ORCID",
                 },
                 {
                   icon: <FaResearchgate size={22} />,
                   color: "#00CCBB",
-                  url: "YOUR_RESEARCHGATE_LINK",
+                  url: "https://www.researchgate.net/profile/Md-Mohaiminul-Islam-Sajib?ev=hdr_xprf",
                   name: "ResearchGate",
                 },
                 {
@@ -1088,13 +1088,13 @@ export default function Portfolio() {
                 {
                   icon: <SiCodeforces size={22} />,
                   color: "#1F8ACB",
-                  url: "YOUR_CODEFORCES_LINK",
+                  url: "https://codeforces.com/profile/mi_sajib",
                   name: "Codeforces",
                 },
                 {
                   icon: <SiLeetcode size={22} />,
                   color: "#FFA116",
-                  url: "YOUR_LEETCODE_LINK",
+                  url: "https://leetcode.com/u/mohaiminul_sajib/",
                   name: "LeetCode",
                 },
                 {
