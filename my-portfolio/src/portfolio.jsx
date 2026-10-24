@@ -1064,7 +1064,7 @@ export default function Portfolio() {
                 {
                   icon: <SiGooglescholar size={22} />,
                   color: "#4285F4",
-                  url: "YOUR_GOOGLE_SCHOLAR_LINK",
+                  url: "https://scholar.google.com/citations?user=ynJRhxEAAAAJ&hl=en",
                   name: "Google Scholar",
                 },
                 {
