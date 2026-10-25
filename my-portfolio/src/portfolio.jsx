@@ -938,7 +938,7 @@ export default function Portfolio() {
             </div>
 
             <p className="academic-copy" style={{ color: "#9CA3AF", fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, lineHeight: 1.8, maxWidth: 520, marginBottom: 40 }}>
-              I’m a third-year Computer Science and Engineering student at Varendra University, exploring AI, machine learning, computer vision, NLP, and applied research to create meaningful human-centered solutions.
+              I’m a fourth-year Computer Science and Engineering student at Varendra University, exploring AI, machine learning, computer vision, NLP, and applied research to create meaningful human-centered solutions.
             </p>
 
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 48 }}>
@@ -1280,7 +1280,7 @@ export default function Portfolio() {
       <section id="about" style={{ padding: "120px 5vw" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Reveal>
-            <SectionTitle tag="01 — About" title="Who Am I?" sub="Third-year CSE student at Varendra University exploring AI, research, and applied intelligent systems." />
+            <SectionTitle tag="01 — About" title="Who Am I?" sub="Fourth-year CSE student at Varendra University exploring AI, research, and applied intelligent systems." />
           </Reveal>
           <div className="cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 24 }}>
             {[
